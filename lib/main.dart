@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'providers/game_provider.dart';
 import 'providers/step_counter_provider.dart';
 import 'providers/location_provider.dart';
+import 'screens/puzzle_list_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(const WalkingPuzzleApp());
@@ -35,20 +37,27 @@ class WalkingPuzzleApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const HomeScreen(),
+        home: const MainNavigationScreen(),
       ),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = const [
+    PuzzleListScreen(),
+    ProfileScreen(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -73,131 +82,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Walking Puzzle Game'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Consumer<StepCounterProvider>(
-              builder: (context, stepProvider, child) {
-                return Column(
-                  children: [
-                    Icon(
-                      Icons.directions_walk,
-                      size: 80,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      '오늘의 걸음 수',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${stepProvider.todaySteps}',
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${stepProvider.todayDistanceKm.toStringAsFixed(2)} km',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 32),
-            Consumer<LocationProvider>(
-              builder: (context, locationProvider, child) {
-                final location = locationProvider.currentLocation;
-                return Column(
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 40,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      location != null
-                          ? '위치: ${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}'
-                          : '위치 정보를 가져오는 중...',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 32),
-            Consumer<GameProvider>(
-              builder: (context, gameProvider, child) {
-                final progress = gameProvider.userProgress;
-                return Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Text(
-                          '게임 진행 상황',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  '잠금 해제',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                Text(
-                                  '${progress?.unlockedPuzzles.length ?? 0}',
-                                  style: Theme.of(context).textTheme.headlineMedium,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '완료',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                Text(
-                                  '${progress?.completedPuzzles.length ?? 0}',
-                                  style: Theme.of(context).textTheme.headlineMedium,
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '힌트',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                Text(
-                                  '${progress?.availableHints ?? 0}',
-                                  style: Theme.of(context).textTheme.headlineMedium,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+      body: _screens[_currentIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.extension_outlined),
+            selectedIcon: Icon(Icons.extension),
+            label: '퍼즐',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: '내 정보',
+          ),
+        ],
       ),
     );
   }

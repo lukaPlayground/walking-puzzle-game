@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class LocationModel {
   final double latitude;
   final double longitude;
@@ -31,14 +33,14 @@ class LocationModel {
 
   double distanceTo(LocationModel other) {
     const double earthRadius = 6371000;
-    final double lat1Rad = latitude * 0.017453292519943295;
-    final double lat2Rad = other.latitude * 0.017453292519943295;
-    final double deltaLat = (other.latitude - latitude) * 0.017453292519943295;
-    final double deltaLon = (other.longitude - longitude) * 0.017453292519943295;
+    final double lat1Rad = latitude * pi / 180;
+    final double lat2Rad = other.latitude * pi / 180;
+    final double deltaLat = (other.latitude - latitude) * pi / 180;
+    final double deltaLon = (other.longitude - longitude) * pi / 180;
 
-    final double a = (deltaLat / 2).sin() * (deltaLat / 2).sin() +
-        lat1Rad.cos() * lat2Rad.cos() * (deltaLon / 2).sin() * (deltaLon / 2).sin();
-    final double c = 2 * (a.sqrt()).asin();
+    final double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+        cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2) * sin(deltaLon / 2);
+    final double c = 2 * asin(sqrt(a));
 
     return earthRadius * c;
   }

@@ -174,4 +174,20 @@ class GameProvider with ChangeNotifier {
       return null;
     }
   }
+
+  PuzzleModel? getCurrentPuzzle() {
+    if (_userProgress == null || _puzzles.isEmpty) return null;
+
+    // Find the first unlocked puzzle that is not completed
+    for (final puzzle in _puzzles) {
+      final isUnlocked = _userProgress!.isPuzzleUnlocked(puzzle.id);
+      final isCompleted = _userProgress!.isPuzzleCompleted(puzzle.id);
+
+      if (isUnlocked && !isCompleted) {
+        return puzzle;
+      }
+    }
+
+    return null;
+  }
 }
