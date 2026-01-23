@@ -35,24 +35,24 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
     final difficulty = widget.puzzle.difficulty;
     int tubeCount;
     const int capacity = 4;
-    const int emptyTubeCount = 2; // 항상 빈 튜브 2개
+    const int emptyTubeCount = 1; // 빈 튜브 1개
 
     // 난이도에 따른 총 튜브 수
     switch (difficulty) {
       case 1: // 쉬움
-        tubeCount = 5; // 색상 3개 + 빈 튜브 2개
+        tubeCount = 4; // 색상 3개 + 빈 튜브 1개
         break;
       case 2: // 일반
-        tubeCount = 6; // 색상 4개 + 빈 튜브 2개
+        tubeCount = 5; // 색상 4개 + 빈 튜브 1개
         break;
       case 3: // 어려움
-        tubeCount = 7; // 색상 5개 + 빈 튜브 2개
+        tubeCount = 6; // 색상 5개 + 빈 튜브 1개
         break;
       case 4: // 지옥
-        tubeCount = 8; // 색상 6개 + 빈 튜브 2개
+        tubeCount = 7; // 색상 6개 + 빈 튜브 1개
         break;
       default:
-        tubeCount = 5;
+        tubeCount = 4;
     }
 
     // 색상 수 = 채워진 튜브 수

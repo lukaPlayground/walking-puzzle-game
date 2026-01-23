@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/game_provider.dart';
 import '../providers/step_counter_provider.dart';
 import '../models/puzzle_model.dart';
 import 'water_sort_puzzle_screen.dart';
+import 'tutorial_screen.dart';
 
 class PuzzleListScreen extends StatelessWidget {
   const PuzzleListScreen({super.key});
@@ -247,13 +249,34 @@ class PuzzleListScreen extends StatelessWidget {
       elevation: isUnlocked ? 4 : 2,
       child: InkWell(
         onTap: isUnlocked
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WaterSortPuzzleScreen(puzzle: puzzle),
-                  ),
-                );
+            ? () async {
+                // 스테이지 1인 경우 튜토리얼 확인
+                if (puzzle.id == 'puzzle_001') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final hasSeenTutorial = prefs.getBool('has_seen_tutorial') ?? false;
+
+                  if (!hasSeenTutorial && context.mounted) {
+                    // 튜토리얼 화면 표시
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TutorialScreen(),
+                      ),
+                    );
+                    // 튜토리얼 본 것으로 표시
+                    await prefs.setBool('has_seen_tutorial', true);
+                  }
+                }
+
+                // 게임 화면으로 이동
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WaterSortPuzzleScreen(puzzle: puzzle),
+                    ),
+                  );
+                }
               }
             : null,
         borderRadius: BorderRadius.circular(12),
