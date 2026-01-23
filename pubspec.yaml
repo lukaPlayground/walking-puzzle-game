@@ -37,7 +37,7 @@ dependencies:
 
   # Location and sensor packages
   geolocator: ^13.0.2
-  pedometer: ^4.0.2
+  health: ^10.2.0
   google_maps_flutter: ^2.10.0
   permission_handler: ^11.3.1
   sensors_plus: ^6.1.0

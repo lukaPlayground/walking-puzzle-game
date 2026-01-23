@@ -286,6 +286,126 @@ lib/
 
 ---
 
+### 2026-01-23: 걸음 수 연동 시스템 구현 (HealthKit/Health Connect)
+
+#### 1. health 패키지로 전환
+
+**기존 pedometer 패키지 제거 및 health 패키지 설치**:
+- `pedometer` → `health: ^10.2.0`로 교체
+- iOS HealthKit 및 Android Health Connect 지원
+
+**장점**:
+- ✅ 시스템 헬스 앱(iOS 건강, Google Fit)의 걸음 수 데이터 활용
+- ✅ 더 정확한 걸음 수 측정
+- ✅ 백그라운드 자동 동기화
+- ✅ 배터리 효율적
+- ✅ 애플 워치 등 웨어러블 기기 데이터 통합
+
+#### 2. iOS HealthKit 권한 설정
+
+**Info.plist 업데이트**:
+```xml
+<key>NSHealthShareUsageDescription</key>
+<string>건강 앱의 걸음 수 데이터를 읽어와 퍼즐 힌트와 스테이지를 잠금 해제하기 위해 필요합니다.</string>
+<key>NSHealthUpdateUsageDescription</key>
+<string>건강 앱과 연동하여 걸음 수 데이터를 업데이트하기 위해 필요합니다.</string>
+```
+
+**Runner.entitlements 생성**:
+- HealthKit capability 활성화
+- `com.apple.developer.healthkit` 권한 추가
+
+#### 3. Android Health Connect 권한 설정
+
+**AndroidManifest.xml 업데이트**:
+```xml
+<uses-permission android:name="android.permission.health.READ_STEPS"/>
+<uses-permission android:name="android.permission.health.WRITE_STEPS"/>
+<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+```
+
+**Health Connect 인텐트 필터 추가**:
+- `androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE`
+- `android.intent.action.VIEW_PERMISSION_USAGE`
+
+#### 4. HealthService 구현
+
+**새로운 HealthService** (`lib/services/health_service.dart`):
+- `requestHealthPermissions()`: HealthKit/Health Connect 권한 요청
+- `getTodaySteps()`: 오늘 자정부터 현재까지 걸음 수
+- `getStepsInInterval()`: 특정 기간 걸음 수
+- `getYesterdaySteps()`: 어제 걸음 수
+- `getWeekSteps()`: 지난 7일 걸음 수
+- `stepsToKilometers()`: 걸음 수 → 거리(km) 변환
+- `stepsToCalories()`: 걸음 수 → 칼로리 변환
+
+**pedometer_service.dart 삭제**: 더 이상 사용하지 않음
+
+#### 5. StepCounterProvider 리팩토링
+
+**health 패키지 기반으로 재구현**:
+- 실시간 스트림 대신 **30초마다 주기적으로 걸음 수 업데이트**
+- `Timer.periodic`을 사용하여 백그라운드에서 지속적으로 데이터 갱신
+- `fetchTodaySteps()`: HealthKit/Health Connect에서 최신 걸음 수 가져오기
+- 자정 기준 일일 걸음 수 자동 리셋
+
+**주요 메서드**:
+- `initialize()`: 권한 요청 및 초기 데이터 로드
+- `startTracking()`: 30초마다 걸음 수 업데이트 시작
+- `stopTracking()`: 추적 중지
+- `getYesterdaySteps()`, `getWeekSteps()`: 통계 데이터
+
+#### 6. 걸음 수 기반 힌트 획득 시스템
+
+**GameProvider 업데이트**:
+- **2000보당 힌트 1개 자동 지급**
+- `stepsPerHint = 2000` 상수 정의
+- `_checkAndRewardHints()`: 걸음 수 달성 시 힌트 자동 추가
+- `getStepsUntilNextHint()`: 다음 힌트까지 남은 걸음 수 계산
+- `getTotalHintsFromSteps()`: 오늘 걸음 수로 받은 총 힌트 개수
+
+**자동 보상 로직**:
+```dart
+// 예: 4500보 걸었을 때
+// - 힌트 2개 획득 (2000보, 4000보 달성)
+// - 다음 힌트까지 1500보 남음 (6000보 목표)
+```
+
+#### 7. 걸음 수 기반 스테이지 잠금 해제 시스템
+
+**자동 잠금 해제 로직** (`GameProvider._checkAndUnlockPuzzlesBySteps()`):
+- 퍼즐의 `requiredSteps` 속성 기준으로 자동 잠금 해제
+- 예시:
+  - 스테이지 2: 2620보 (약 2km) 필요
+  - 스테이지 3: 6562보 (약 5km) 필요
+- 위치 기반 퍼즐은 제외 (GPS로만 잠금 해제)
+
+**StepCounterProvider와 GameProvider 연동** (`main.dart`):
+```dart
+stepCounterProvider.addListener(() {
+  gameProvider.updateSteps(
+    stepCounterProvider.todaySteps,
+    stepCounterProvider.totalSteps,
+  );
+});
+```
+
+#### 8. UI 업데이트: 걸음 수 보상 진행 표시
+
+**PuzzleListScreen에 보상 카드 추가**:
+- **걸음 수 보상 진행 바**: 다음 힌트까지 진행 상황 시각화
+- **획득한 힌트 개수 표시**: 오늘 걸음 수로 받은 힌트 +N 표시
+- **남은 걸음 수 안내**: "다음 힌트까지 N보 남음"
+- Material Design 3 `primaryContainer` 색상 사용
+
+**표시 정보**:
+- 🚶 걸음 수 보상
+- 💡 오늘 획득한 힌트 개수
+- Progress Bar (0~2000보 구간)
+- 다음 힌트까지 남은 걸음 수
+
+---
+
 ## 현재 프로젝트 구조
 
 ```
@@ -301,14 +421,14 @@ lib/
 ├── services/
 │   ├── permission_service.dart            # 권한 관리 서비스
 │   ├── location_service.dart              # 위치 추적 서비스
-│   ├── pedometer_service.dart             # 걸음 수 측정 서비스
+│   ├── health_service.dart                # HealthKit/Health Connect 서비스 (NEW)
 │   └── storage_service.dart               # 로컬 저장소 서비스
 ├── providers/
-│   ├── game_provider.dart                 # 게임 상태 관리
-│   ├── step_counter_provider.dart         # 걸음 수 상태 관리
+│   ├── game_provider.dart                 # 게임 상태 관리 + 걸음 수 보상 로직
+│   ├── step_counter_provider.dart         # 걸음 수 상태 관리 (health 기반)
 │   └── location_provider.dart             # 위치 상태 관리
 ├── screens/
-│   ├── puzzle_list_screen.dart            # 퍼즐 목록 화면
+│   ├── puzzle_list_screen.dart            # 퍼즐 목록 화면 + 걸음 수 보상 카드
 │   ├── profile_screen.dart                # 내 정보 화면
 │   ├── water_sort_puzzle_screen.dart      # Water Sort Puzzle 게임 화면
 │   ├── color_puzzle_screen.dart           # 색상 퍼즐 게임 화면
@@ -322,7 +442,8 @@ lib/
 
 ### ✅ 기본 인프라
 - Flutter 프로젝트 설정 및 패키지 설치
-- iOS 권한 설정 (위치, 모션 센서)
+- iOS 권한 설정 (위치, 모션 센서, HealthKit)
+- Android 권한 설정 (위치, Health Connect)
 - Provider 기반 상태 관리
 - 로컬 데이터 저장 (SharedPreferences)
 
@@ -339,33 +460,43 @@ lib/
 - 순차적 스테이지 진행
 - 진행 상황 통계
 
+### ✅ 걸음 수 연동 시스템 (핵심 완료!)
+- **HealthKit/Health Connect 통합**: iOS 건강 앱 및 Google Fit 데이터 활용
+- **2000보당 힌트 1개 자동 지급**: 걷기만 하면 힌트 획득
+- **걸음 수 기반 스테이지 잠금 해제**: 특정 거리 달성 시 새 퍼즐 해제
+- **실시간 진행 상황 표시**: 다음 힌트까지 남은 걸음 수 및 진행 바
+- **30초마다 자동 동기화**: 백그라운드에서 걸음 수 자동 업데이트
+
 ### ✅ UI/UX
-- 퍼즐 목록 화면
+- 퍼즐 목록 화면 + 걸음 수 보상 카드
 - 내 정보 통계 화면
 - 하단 네비게이션 바
 - Material Design 3 적용
+- 걸음 수 보상 진행 상황 시각화
 
 ## 다음 단계 (예정)
 
-1. **걸음 수 연동 시스템 (핵심)**
-   - 걸음 수에 따른 힌트 획득 시스템
-   - 특정 거리 달성 시 스테이지 잠금 해제
-   - 일일 목표 달성 보상
+1. **위치 기반 특별 보상 (우선순위 높음)**
+   - 백그라운드 GPS 감지 및 로컬 알림
+   - 랜드마크 근처 도달 시 알림 발송
+   - 보상 형태 결정 (힌트/퍼즐/아이콘 등)
+   - 실제 기기에서 GPS 감지 테스트
 
-2. **위치 기반 특별 퍼즐**
-   - Google Maps 통합
-   - 랜드마크 방문 시 특별 퍼즐 잠금 해제
-   - 지도에 랜드마크 마커 표시
+2. **실제 기기 테스트 및 최적화**
+   - iOS 실제 기기에서 HealthKit 연동 테스트
+   - Android 기기에서 Health Connect 테스트
+   - 백그라운드 위치 추적 배터리 최적화
+   - 걸음 수 동기화 주기 최적화 (30초 → 조정 가능)
 
 3. **추가 퍼즐 타입**
    - 색상 매칭 퍼즐
    - 일반 조각 맞추기 퍼즐
    - 다양한 난이도 및 테마
 
-4. **실제 기기 테스트 및 최적화**
-   - iOS 실제 기기에서 걸음 수 및 위치 추적 테스트
-   - Android 기기 테스트
-   - 배터리 최적화
+4. **사용자 경험 개선**
+   - 튜토리얼 추가
+   - 일일 목표 달성 보상
+   - 배지/업적 시스템
 
 ---
 

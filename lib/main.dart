@@ -86,6 +86,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       stepCounterProvider.startTracking();
       locationProvider.startTracking();
 
+      // StepCounterProvider 리스너 추가: 걸음 수 변경 시 GameProvider에 자동 업데이트
+      stepCounterProvider.addListener(() {
+        gameProvider.updateSteps(
+          stepCounterProvider.todaySteps,
+          stepCounterProvider.totalSteps,
+        );
+      });
+
       if (mounted) {
         setState(() {
           _isInitializing = false;

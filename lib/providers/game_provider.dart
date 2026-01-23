@@ -9,6 +9,10 @@ class GameProvider with ChangeNotifier {
   UserProgressModel? _userProgress;
   List<PuzzleModel> _puzzles = [];
 
+  // 걸음 수 기반 힌트 획득 설정
+  static const int stepsPerHint = 2000; // 2000보당 힌트 1개
+  int _lastHintSteps = 0; // 마지막으로 힌트를 받은 걸음 수
+
   UserProgressModel? get userProgress => _userProgress;
   List<PuzzleModel> get puzzles => _puzzles;
   List<PuzzleModel> get availablePuzzles => _puzzles
@@ -41,6 +45,9 @@ class GameProvider with ChangeNotifier {
         availableHints: 3, // 시작 시 힌트 3개 제공
       );
       await _saveUserProgress();
+    } else {
+      // 저장된 오늘 걸음 수 기준으로 마지막 힌트 획득 기준 초기화
+      _lastHintSteps = (_userProgress!.todaySteps ~/ stepsPerHint) * stepsPerHint;
     }
     notifyListeners();
   }
@@ -188,6 +195,9 @@ class GameProvider with ChangeNotifier {
 
     final distance = todaySteps * 0.762 / 1000;
 
+    // 걸음 수 기반 힌트 획득 체크
+    await _checkAndRewardHints(todaySteps);
+
     _userProgress = _userProgress!.copyWith(
       todaySteps: todaySteps,
       totalSteps: totalSteps,
@@ -196,6 +206,65 @@ class GameProvider with ChangeNotifier {
     );
     await _saveUserProgress();
     notifyListeners();
+  }
+
+  /// 걸음 수에 따라 힌트 보상 제공
+  Future<void> _checkAndRewardHints(int todaySteps) async {
+    if (_userProgress == null) return;
+
+    // 오늘 걸음 수가 힌트 획득 기준을 넘었는지 확인
+    final hintsEarned = todaySteps ~/ stepsPerHint;
+    final previousHintsEarned = _lastHintSteps ~/ stepsPerHint;
+
+    if (hintsEarned > previousHintsEarned) {
+      final newHints = hintsEarned - previousHintsEarned;
+      _userProgress = _userProgress!.copyWith(
+        availableHints: _userProgress!.availableHints + newHints,
+        lastUpdated: DateTime.now(),
+      );
+      _lastHintSteps = todaySteps;
+      print('🎁 걸음 수 보상: 힌트 $newHints개 획득! (${todaySteps}보 달성)');
+    }
+
+    // 걸음 수 기반 퍼즐 잠금 해제 체크
+    await _checkAndUnlockPuzzlesBySteps(todaySteps);
+  }
+
+  /// 걸음 수에 따라 퍼즐 자동 잠금 해제
+  Future<void> _checkAndUnlockPuzzlesBySteps(int todaySteps) async {
+    if (_userProgress == null) return;
+
+    bool hasUnlockedAny = false;
+
+    for (final puzzle in _puzzles) {
+      // 이미 잠금 해제된 퍼즐은 스킵
+      if (_userProgress!.isPuzzleUnlocked(puzzle.id)) continue;
+
+      // 위치 기반 퍼즐은 스킵 (GPS로만 잠금 해제)
+      if (puzzle.isLocationBased) continue;
+
+      // 필요한 걸음 수를 충족했는지 확인
+      if (todaySteps >= puzzle.requiredSteps) {
+        await unlockPuzzle(puzzle.id);
+        hasUnlockedAny = true;
+        print('🔓 걸음 수 잠금 해제: ${puzzle.title} (${todaySteps}/${puzzle.requiredSteps}보)');
+      }
+    }
+
+    if (hasUnlockedAny) {
+      notifyListeners();
+    }
+  }
+
+  /// 오늘 걸음 수 기준으로 다음 힌트까지 남은 걸음 수 계산
+  int getStepsUntilNextHint(int todaySteps) {
+    final nextMilestone = ((todaySteps ~/ stepsPerHint) + 1) * stepsPerHint;
+    return nextMilestone - todaySteps;
+  }
+
+  /// 오늘 걸음 수로 받을 수 있는 총 힌트 개수
+  int getTotalHintsFromSteps(int todaySteps) {
+    return todaySteps ~/ stepsPerHint;
   }
 
   Future<void> _saveUserProgress() async {

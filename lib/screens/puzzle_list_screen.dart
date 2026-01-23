@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
+import '../providers/step_counter_provider.dart';
 import '../models/puzzle_model.dart';
 import 'water_sort_puzzle_screen.dart';
 
@@ -14,11 +15,12 @@ class PuzzleListScreen extends StatelessWidget {
         title: const Text('퍼즐'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Consumer<GameProvider>(
-        builder: (context, gameProvider, child) {
+      body: Consumer2<GameProvider, StepCounterProvider>(
+        builder: (context, gameProvider, stepProvider, child) {
           final userProgress = gameProvider.userProgress;
           final puzzles = gameProvider.puzzles;
           final completedCount = userProgress?.completedPuzzles.length ?? 0;
+          final todaySteps = stepProvider.todaySteps;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -52,6 +54,9 @@ class PuzzleListScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+                // 걸음 수 보상 진행 상황 카드
+                _buildStepRewardCard(context, gameProvider, todaySteps),
                 const SizedBox(height: 24),
                 Text(
                   '플레이 가능한 스테이지',
@@ -155,6 +160,79 @@ class PuzzleListScreen extends StatelessWidget {
               ),
         ),
       ],
+    );
+  }
+
+  Widget _buildStepRewardCard(
+    BuildContext context,
+    GameProvider gameProvider,
+    int todaySteps,
+  ) {
+    final stepsUntilNextHint = gameProvider.getStepsUntilNextHint(todaySteps);
+    final totalHintsFromSteps = gameProvider.getTotalHintsFromSteps(todaySteps);
+    final progress = (todaySteps % GameProvider.stepsPerHint) / GameProvider.stepsPerHint;
+
+    return Card(
+      elevation: 2,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.directions_walk,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  size: 28,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '걸음 수 보상',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.lightbulb,
+                  color: Colors.amber,
+                  size: 24,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '+$totalHintsFromSteps',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 12,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '다음 힌트까지 $stepsUntilNextHint보 남음 (${GameProvider.stepsPerHint}보당 힌트 1개)',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
