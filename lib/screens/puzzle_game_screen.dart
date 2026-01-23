@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import '../models/puzzle_model.dart';
 import '../models/puzzle_piece.dart';
 import '../providers/game_provider.dart';
@@ -29,22 +27,15 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
   // A구역 (조립 영역) 설정
   late Rect _assemblyZone;
 
-  // 흔들림 감지
-  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
-  double _shakeThreshold = 15.0;
-  DateTime? _lastShakeTime;
-
   @override
   void initState() {
     super.initState();
     _initializeAssemblyZone();
     _initializePuzzle();
-    _startShakeDetection();
   }
 
   @override
   void dispose() {
-    _accelerometerSubscription?.cancel();
     super.dispose();
   }
 
@@ -60,49 +51,6 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen> {
       centerY - gridHeight / 2,
       gridWidth,
       gridHeight,
-    );
-  }
-
-  void _startShakeDetection() {
-    _accelerometerSubscription = accelerometerEventStream().listen((AccelerometerEvent event) {
-      final magnitude = math.sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-
-      if (magnitude > _shakeThreshold) {
-        final now = DateTime.now();
-        if (_lastShakeTime == null || now.difference(_lastShakeTime!) > const Duration(seconds: 1)) {
-          _lastShakeTime = now;
-          _onShakeDetected();
-        }
-      }
-    });
-  }
-
-  void _onShakeDetected() {
-    setState(() {
-      // 고정되지 않은 조각들을 A구역 바깥으로 흩어뜨림
-      final random = math.Random();
-      final screenWidth = 400.0;
-      final screenHeight = 600.0;
-
-      for (var piece in _pieces) {
-        if (!piece.isPlaced) {
-          // A구역 바깥으로 랜덤 배치
-          double randomX, randomY;
-          do {
-            randomX = random.nextDouble() * (screenWidth - _pieceSize);
-            randomY = random.nextDouble() * (screenHeight - _pieceSize);
-          } while (_assemblyZone.contains(Offset(randomX + _pieceSize / 2, randomY + _pieceSize / 2)));
-
-          piece.currentPosition = Offset(randomX, randomY);
-        }
-      }
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('흔들림 감지! 조각들이 무너졌습니다 😱'),
-        duration: Duration(seconds: 1),
-      ),
     );
   }
 

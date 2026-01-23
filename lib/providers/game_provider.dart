@@ -24,7 +24,7 @@ class GameProvider with ChangeNotifier {
 
   Future<void> initialize() async {
     // 개발 모드: 앱 재시작 시 진행 상황 초기화
-    const bool isDevelopmentMode = true; // 배포 시 false로 변경
+    const bool isDevelopmentMode = false; // 배포 모드: 진행 상황 유지
 
     if (isDevelopmentMode) {
       await _storageService.clearUserProgress();
