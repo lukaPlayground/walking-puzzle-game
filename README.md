@@ -1,124 +1,137 @@
-# Walking Puzzle Game (걸으면 풀리는 퍼즐)
+# 🚶‍♂️ Walking Puzzle Game (걸으면 풀리는 퍼즐)
 
 **광고 없는 모바일 퍼즐 게임**으로, 신체 활동(걷기/달리기)과 게임을 결합하여 사용자에게 운동 동기를 부여합니다.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-3.x-blue.svg)](https://dart.dev/)
+[![iOS](https://img.shields.io/badge/iOS-14.0+-black.svg)](https://www.apple.com/ios/)
+[![Android](https://img.shields.io/badge/Android-API%2026+-green.svg)](https://www.android.com/)
 
 ---
 
-## 📖 프로젝트 개요
+## 🎮 주요 기능
 
-### 주요 기능
+### 1️⃣ Water Sort Puzzle 게임
+- **4가지 난이도**: 쉬움, 일반, 어려움, 지옥
+- **10개 스테이지**: 점진적인 난이도 상승
+- **색약 모드 지원**: 접근성 고려
+- **AI 힌트 시스템**: 막힐 때 최선의 이동 제안
+- **별점 평가**: 효율성에 따른 1~3개 별 획득
+- **이동 횟수 제한**: 난이도별 30~60회
 
-- **일반 퍼즐 스테이지**: 두뇌로만 풀 수 있는 기본 퍼즐
-- **난이도 높은 스테이지**: 걷기를 통해 잠금 해제
-  - 예: 2km 걷기 → 퍼즐 힌트 1개
-  - 5km 걷기 → 스테이지 클리어
-- **위치 기반 콘텐츠**: 한국 주요 랜드마크(N서울타워, 북촌, 제주 한라산 등) 방문 시 특별 퍼즐 잠금 해제
-- **GPS 추적 및 만보계 통합**
+### 2️⃣ 걸음 수 연동 시스템 (핵심!)
+- **HealthKit (iOS) / Health Connect (Android) 통합**
+  - iOS 건강 앱 및 Google Fit 데이터 활용
+  - 애플 워치, Fitbit 등 웨어러블 기기 지원
+  - 더 정확하고 배터리 효율적인 측정
+  - 30초마다 자동 동기화
 
-### 기술 스택
+- **2000보당 힌트 1개 자동 지급**
+  - 걷기만 하면 게임에 도움이 되는 힌트 획득
+  - 실시간 진행 상황 표시 (Progress Bar)
+  - 다음 힌트까지 남은 걸음 수 안내
 
-- **프레임워크**: Flutter 3.x
-- **언어**: Dart
-- **지도**: Google Maps / Kakao Maps (한국 최적화)
-- **센서**: Pedometer, Health API (걸음 수 추적)
-- **상태 관리**: Provider
-- **로컬 저장소**: SharedPreferences
+- **걸음 수 기반 스테이지 잠금 해제**
+  - 스테이지 3: 2km (약 2,620보) 걸으면 해제
+  - 스테이지 6: 5km (약 6,562보) 걸으면 해제
+  - 스테이지 8: 10km (약 13,123보) 걸으면 해제
+
+### 3️⃣ 위치 기반 콘텐츠 (개발 예정)
+- **한국 주요 랜드마크 방문 시 특별 보상**
+  - N서울타워, 북촌 한옥마을, 제주 한라산 등
+  - 백그라운드 GPS 감지로 자동 알림
+  - 보상: 힌트, 특별 퍼즐, 캐릭터 아이콘 등
 
 ---
 
-## 🎮 구현된 게임
+## 📱 지원 플랫폼
 
-### Water Sort Puzzle
+- **iOS**: 14.0 이상 (HealthKit 지원)
+- **Android**: API 26 (Android 8.0) 이상 (Health Connect 지원)
 
-완전히 구현된 물 정렬 퍼즐 게임:
+---
 
-- **4단계 난이도**: 쉬움, 일반, 어려움, 지옥
-- **이동 횟수 제한**: 난이도별 최대 이동 횟수 (30~60회)
-- **별점 평가 시스템**: ⭐⭐⭐ (70% 이하), ⭐⭐ (90% 이하), ⭐ (클리어)
-- **색약 모드 지원**: 접근성 향상
-- **AI 기반 힌트 시스템**: 최선의 이동 제안 및 자동 실행
-- **순차적 스테이지 진행**: 이전 스테이지 완료 시 다음 스테이지 잠금 해제
+## 🛠️ 기술 스택
+
+### Frontend
+- **Flutter 3.x**: 크로스 플랫폼 개발
+- **Dart 3.x**: 언어
+- **Material Design 3**: UI 디자인 시스템
+
+### State Management & Storage
+- **Provider**: 상태 관리
+- **SharedPreferences**: 로컬 데이터 저장
+
+### Health & Location
+- **health: ^10.2.0**: HealthKit / Health Connect 통합
+- **geolocator: ^13.0.2**: GPS 위치 추적
+- **permission_handler: ^11.3.1**: 권한 관리
 
 ---
 
 ## 🚀 시작하기
 
-### 필수 요구 사항
+### 필수 요구사항
 
-- Flutter SDK 3.x 이상
-- Dart SDK 3.x 이상
-- iOS: Xcode 및 Apple Developer 계정 (실기기 테스트)
-- Android: Android Studio
+- **Flutter SDK**: 3.10.4 이상
+- **Dart SDK**: 3.10.4 이상
+- **iOS 개발**: Xcode 14 이상, macOS
+- **Android 개발**: Android Studio
 
 ### 설치 및 실행
 
-1. **저장소 클론**:
-   ```bash
-   git clone https://github.com/lukaPlayground/walking-puzzle-game.git
-   cd walking_puzzle_game
-   ```
+```bash
+# 1. 저장소 클론
+git clone https://github.com/lukaPlayground/walking-puzzle-game.git
+cd walking_puzzle_game
 
-2. **패키지 설치**:
-   ```bash
-   flutter pub get
-   ```
+# 2. 패키지 설치
+flutter pub get
 
-3. **iOS 설정** (iOS 실기기 테스트 시):
-   ```bash
-   cd ios
-   pod install
-   cd ..
-   ```
+# 3. iOS 의존성 설치 (macOS 전용)
+cd ios && pod install && cd ..
 
-4. **앱 실행**:
-   ```bash
-   flutter run
-   ```
-
-### 주요 패키지
-
-```yaml
-dependencies:
-  # 위치 및 센서
-  geolocator: ^13.0.2          # GPS 위치 추적
-  pedometer: ^4.0.2            # 걸음 수 측정
-  google_maps_flutter: ^2.10.0 # Google Maps 통합
-  permission_handler: ^11.3.1  # 권한 관리
-
-  # 상태 관리 및 저장소
-  provider: ^6.1.2             # 상태 관리
-  shared_preferences: ^2.3.5   # 로컬 데이터 저장
+# 4. 앱 실행
+flutter run
 ```
+
+### iOS HealthKit 설정
+
+⚠️ **HealthKit은 실제 iOS 기기에서만 동작합니다.**
+- 시뮬레이터에서는 권한 요청만 테스트할 수 있습니다.
+- 실제 기기에서 테스트하려면 Apple Developer 계정이 필요합니다.
+
+### Android Health Connect 설정
+
+- **Android 14 (API 34) 이상**: Health Connect가 시스템에 내장
+- **Android 13 이하**: Google Play에서 [Health Connect 앱](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata) 별도 설치 필요
 
 ---
 
-## 📁 프로젝트 구조
+## 📂 프로젝트 구조
 
 ```
 lib/
-├── main.dart                              # 앱 진입점 및 네비게이션
-├── models/
-│   ├── puzzle_model.dart                  # 퍼즐 데이터 모델
-│   ├── user_progress_model.dart           # 사용자 진행 상황 모델
-│   ├── location_model.dart                # 위치 및 랜드마크 모델
-│   └── water_tube.dart                    # Water Sort Puzzle 튜브 모델
-├── services/
-│   ├── permission_service.dart            # 권한 관리 서비스
-│   ├── location_service.dart              # 위치 추적 서비스
-│   ├── pedometer_service.dart             # 걸음 수 측정 서비스
-│   └── storage_service.dart               # 로컬 저장소 서비스
-├── providers/
-│   ├── game_provider.dart                 # 게임 상태 관리
-│   ├── step_counter_provider.dart         # 걸음 수 상태 관리
-│   └── location_provider.dart             # 위치 상태 관리
-├── screens/
-│   ├── puzzle_list_screen.dart            # 퍼즐 목록 화면
-│   ├── profile_screen.dart                # 내 정보 화면
-│   └── water_sort_puzzle_screen.dart      # Water Sort Puzzle 게임 화면
-└── widgets/                               # 재사용 가능한 위젯들
+├── main.dart                    # 앱 진입점 및 네비게이션
+├── models/                      # 데이터 모델
+│   ├── puzzle_model.dart        # 퍼즐 정보
+│   ├── user_progress_model.dart # 사용자 진행 상황
+│   ├── location_model.dart      # 위치 및 랜드마크
+│   └── water_tube.dart          # Water Sort Puzzle 튜브
+├── services/                    # 비즈니스 로직
+│   ├── health_service.dart      # HealthKit/Health Connect
+│   ├── location_service.dart    # GPS 추적
+│   ├── permission_service.dart  # 권한 관리
+│   └── storage_service.dart     # 로컬 저장
+├── providers/                   # 상태 관리 (Provider 패턴)
+│   ├── game_provider.dart       # 게임 + 걸음 수 보상
+│   ├── step_counter_provider.dart # 걸음 수 추적
+│   └── location_provider.dart   # 위치 추적
+├── screens/                     # 화면 UI
+│   ├── puzzle_list_screen.dart  # 퍼즐 목록 + 보상 진행
+│   ├── water_sort_puzzle_screen.dart # Water Sort 게임
+│   └── profile_screen.dart      # 내 정보 통계
+└── widgets/                     # 재사용 위젯
 ```
 
 ---
@@ -126,61 +139,74 @@ lib/
 ## ✅ 완료된 기능
 
 ### 기본 인프라
-- ✅ Flutter 프로젝트 설정 및 패키지 설치
-- ✅ iOS 권한 설정 (위치, 모션 센서)
+- ✅ Flutter 프로젝트 설정
+- ✅ iOS HealthKit 권한 및 Entitlements 설정
+- ✅ Android Health Connect 권한 설정
 - ✅ Provider 기반 상태 관리
-- ✅ 로컬 데이터 저장 (SharedPreferences)
+- ✅ SharedPreferences 로컬 저장
 
 ### Water Sort Puzzle 게임
 - ✅ 완전한 게임 로직 구현
-- ✅ 난이도별 퍼즐 생성 (4단계)
+- ✅ 10개 스테이지 (난이도 4단계)
 - ✅ 이동 횟수 제한 및 별점 평가
 - ✅ 색약 모드 지원
-- ✅ AI 기반 힌트 시스템
+- ✅ AI 힌트 시스템
 
-### 게임 진행 시스템
-- ✅ 스테이지 잠금/해제 시스템
-- ✅ 퍼즐 완료 시 자동 저장
-- ✅ 순차적 스테이지 진행
-- ✅ 진행 상황 통계
+### 걸음 수 연동 시스템 (핵심!)
+- ✅ HealthKit/Health Connect 통합
+- ✅ 2000보당 힌트 1개 자동 지급
+- ✅ 걸음 수 기반 스테이지 잠금 해제 (2km, 5km, 10km)
+- ✅ 실시간 진행 상황 표시 (Progress Bar)
+- ✅ 30초마다 자동 동기화
 
 ### UI/UX
-- ✅ 퍼즐 목록 화면
+- ✅ Material Design 3 적용
+- ✅ 퍼즐 목록 화면 + 걸음 수 보상 카드
 - ✅ 내 정보 통계 화면
 - ✅ 하단 네비게이션 바
-- ✅ Material Design 3 적용
+- ✅ 다크/라이트 테마 지원
 
 ---
 
 ## 🔜 다음 단계
 
-1. **걸음 수 연동 시스템 (핵심)**
-   - 걸음 수에 따른 힌트 획득 시스템
-   - 특정 거리 달성 시 스테이지 잠금 해제
-   - 일일 목표 달성 보상
+### 우선순위 높음
+1. **위치 기반 특별 보상**
+   - 백그라운드 GPS 감지 및 로컬 알림
+   - 랜드마크 근처 도달 시 알림 발송
+   - 보상 형태 결정 (힌트/퍼즐/아이콘)
 
-2. **위치 기반 특별 퍼즐**
-   - Google Maps 통합
-   - 랜드마크 방문 시 특별 퍼즐 잠금 해제
-   - 지도에 랜드마크 마커 표시
+2. **실제 기기 테스트 및 최적화**
+   - iOS 실기기에서 HealthKit 연동 검증
+   - Android 실기기에서 Health Connect 검증
+   - 배터리 소모 최적화
+   - 걸음 수 동기화 주기 조정
 
-3. **추가 퍼즐 타입**
+### 추가 기능
+3. **사용자 경험 개선**
+   - 튜토리얼 추가
+   - 일일 목표 및 배지 시스템
+   - 통계 화면 강화
+
+4. **추가 퍼즐 타입**
    - 색상 매칭 퍼즐
-   - 일반 조각 맞추기 퍼즐
-   - 다양한 난이도 및 테마
-
-4. **실제 기기 테스트 및 최적화**
-   - iOS 실제 기기에서 걸음 수 및 위치 추적 테스트
-   - Android 기기 테스트
-   - 배터리 최적화
+   - 조각 맞추기 퍼즐
+   - 다양한 테마
 
 ---
 
-## 📝 참고 사항
+## 🎯 프로젝트 목표
 
-- **실제 기기 테스트 필수**: GPS 및 걸음 수 센서는 에뮬레이터에서 정확히 시뮬레이션할 수 없으므로 실제 iOS/Android 기기에서 테스트 필요
-- **배포 비용**: Apple Developer ($99/년), Google Play ($25 1회)
-- **타겟 지역**: 초기에는 한국 10대 도시, 다운로드 수에 따라 국제 확장 예정
+1. **건강한 습관 형성**: 게임을 즐기면서 자연스럽게 운동 동기 부여
+2. **광고 없는 경험**: 순수하게 게임에만 집중할 수 있는 환경
+3. **접근성**: 색약 모드, 직관적인 UI로 모두가 즐길 수 있는 게임
+4. **탐험 요소**: 위치 기반 콘텐츠로 외출 동기 부여
+
+---
+
+## 📝 개발 로그
+
+자세한 개발 과정 및 기술적 세부사항은 [CLAUDE.md](./CLAUDE.md)를 참고하세요.
 
 ---
 
@@ -191,11 +217,27 @@ lib/
 
 ---
 
+## 🤝 기여하기
+
+이 프로젝트는 개인 프로젝트이지만, 피드백과 제안은 언제나 환영합니다!
+
+- 이슈 등록: [GitHub Issues](https://github.com/lukaPlayground/walking-puzzle-game/issues)
+- 개선 제안 또는 버그 제보
+
+---
+
 ## 📄 라이선스
 
-이 프로젝트는 개인 프로젝트이며, 상업적 사용을 금지합니다.
+이 프로젝트는 개인 학습 및 포트폴리오 목적으로 제작되었습니다.
 
-## 👤 개발자
+---
 
+## 📧 연락처
+
+- **개발자**: Luka Playground
 - **GitHub**: [@lukaPlayground](https://github.com/lukaPlayground)
-- **Blog**: [lukaplayground.tistory.com](https://lukaplayground.tistory.com)
+- **블로그**: [lukaplayground.tistory.com](https://lukaplayground.tistory.com)
+
+---
+
+**Made with ❤️ and 🚶‍♂️ by Luka Playground**

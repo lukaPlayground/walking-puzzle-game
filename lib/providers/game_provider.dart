@@ -54,73 +54,145 @@ class GameProvider with ChangeNotifier {
 
   void _initializePuzzles() {
     _puzzles = [
-      // 쉬움: 5x5 = 25조각
+      // 스테이지 1: 쉬움
       PuzzleModel(
         id: 'puzzle_001',
         title: '스테이지 1',
-        description: '첫 번째 퍼즐입니다. 숨겨진 단어를 찾아보세요!',
+        description: '첫 번째 퍼즐입니다. Water Sort 게임을 즐겨보세요!',
         imageUrl: '',
         difficulty: 1,
         gridRows: 5,
         gridColumns: 5,
         answer: '시작',
-        hints: [
-          '첫 번째 힌트: 무언가를 처음 하는 것',
-          '두 번째 힌트: 출발과 비슷한 의미',
-          '세 번째 힌트: ㅅㅈ',
-        ],
+        hints: [],
         requiredSteps: 0,
-        hintsAvailable: 3,
+        hintsAvailable: 0,
       ),
-      // 일반: 5x10 = 50조각
+      // 스테이지 2: 쉬움
       PuzzleModel(
         id: 'puzzle_002',
         title: '스테이지 2',
-        description: '조금 더 많은 조각이 있습니다. 걸으면서 힌트를 얻으세요!',
+        description: '두 번째 스테이지입니다. 색상을 잘 구분해보세요!',
         imageUrl: '',
-        difficulty: 2,
+        difficulty: 1,
         gridRows: 5,
-        gridColumns: 10,
-        answer: '일산호수공원',
-        hints: [
-          '첫 번째 힌트: 고양시에 있는 유명한 장소',
-          '두 번째 힌트: 물과 자연이 있는 곳',
-        ],
-        requiredSteps: 2620,
-        hintsAvailable: 2,
+        gridColumns: 5,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
       ),
-      // 어려움: 5x15 = 75조각
+      // 스테이지 3: 일반
       PuzzleModel(
         id: 'puzzle_003',
         title: '스테이지 3',
-        description: '더욱 많은 조각! 집중력이 필요합니다.',
+        description: '난이도가 조금 올라갑니다. 2km를 걸으면 잠금 해제!',
         imageUrl: '',
-        difficulty: 3,
-        gridRows: 5,
-        gridColumns: 15,
-        answer: '퍼즐',
-        hints: [
-          '첫 번째 힌트: 조각을 맞추는 게임',
-        ],
-        requiredSteps: 6562,
-        hintsAvailable: 1,
+        difficulty: 2,
+        gridRows: 6,
+        gridColumns: 6,
+        answer: '',
+        hints: [],
+        requiredSteps: 2620, // 약 2km
+        hintsAvailable: 0,
       ),
-      // 매우 어려움: 10x10 = 100조각
+      // 스테이지 4: 일반
       PuzzleModel(
         id: 'puzzle_004',
         title: '스테이지 4',
-        description: '최고 난이도! 100개의 조각을 맞춰보세요.',
+        description: '점점 복잡해집니다. 집중력을 발휘하세요!',
+        imageUrl: '',
+        difficulty: 2,
+        gridRows: 6,
+        gridColumns: 6,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 5: 일반
+      PuzzleModel(
+        id: 'puzzle_005',
+        title: '스테이지 5',
+        description: '중간 난이도 스테이지입니다.',
+        imageUrl: '',
+        difficulty: 2,
+        gridRows: 6,
+        gridColumns: 6,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 6: 어려움
+      PuzzleModel(
+        id: 'puzzle_006',
+        title: '스테이지 6',
+        description: '고난이도 스테이지! 5km를 걸으면 잠금 해제됩니다.',
+        imageUrl: '',
+        difficulty: 3,
+        gridRows: 7,
+        gridColumns: 7,
+        answer: '',
+        hints: [],
+        requiredSteps: 6562, // 약 5km
+        hintsAvailable: 0,
+      ),
+      // 스테이지 7: 어려움
+      PuzzleModel(
+        id: 'puzzle_007',
+        title: '스테이지 7',
+        description: '많은 색상을 정리해야 합니다. 신중하게 움직이세요!',
+        imageUrl: '',
+        difficulty: 3,
+        gridRows: 7,
+        gridColumns: 7,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 8: 매우 어려움
+      PuzzleModel(
+        id: 'puzzle_008',
+        title: '스테이지 8',
+        description: '챌린지 레벨! 10km를 걸으면 잠금 해제됩니다.',
         imageUrl: '',
         difficulty: 4,
-        gridRows: 10,
-        gridColumns: 10,
-        answer: '성공',
-        hints: [
-          '첫 번째 힌트: 목표를 이루었을 때',
-          '두 번째 힌트: 실패의 반대',
-        ],
+        gridRows: 8,
+        gridColumns: 8,
+        answer: '',
+        hints: [],
+        requiredSteps: 13123, // 약 10km
+        hintsAvailable: 0,
+      ),
+      // 스테이지 9: 매우 어려움
+      PuzzleModel(
+        id: 'puzzle_009',
+        title: '스테이지 9',
+        description: '최고 난이도 직전! 인내심이 필요합니다.',
+        imageUrl: '',
+        difficulty: 4,
+        gridRows: 8,
+        gridColumns: 8,
+        answer: '',
+        hints: [],
         requiredSteps: 0,
-        hintsAvailable: 2,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 10: 지옥
+      PuzzleModel(
+        id: 'puzzle_010',
+        title: '스테이지 10',
+        description: '최종 보스! 모든 스킬을 동원해 클리어하세요!',
+        imageUrl: '',
+        difficulty: 4,
+        gridRows: 8,
+        gridColumns: 8,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
       ),
     ];
     notifyListeners();
