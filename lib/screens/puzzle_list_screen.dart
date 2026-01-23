@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
 import '../models/puzzle_model.dart';
+import 'water_sort_puzzle_screen.dart';
 
 class PuzzleListScreen extends StatelessWidget {
   const PuzzleListScreen({super.key});
@@ -16,73 +17,113 @@ class PuzzleListScreen extends StatelessWidget {
       body: Consumer<GameProvider>(
         builder: (context, gameProvider, child) {
           final userProgress = gameProvider.userProgress;
-          final currentPuzzle = gameProvider.getCurrentPuzzle();
-
-          if (currentPuzzle == null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.celebration,
-                    size: 80,
-                    color: Colors.amber,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '모든 스테이지를 완료했습니다!',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '새로운 스테이지가 곧 추가됩니다',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final currentStage = (userProgress?.completedPuzzles.length ?? 0) + 1;
+          final puzzles = gameProvider.puzzles;
+          final completedCount = userProgress?.completedPuzzles.length ?? 0;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // 진행 상황 카드
                 Card(
                   elevation: 2,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Icon(
+                        _buildProgressItem(
+                          context,
                           Icons.flag,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 32,
+                          '완료',
+                          '$completedCount/${puzzles.length}',
+                          Colors.green,
                         ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '현재 스테이지',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            Text(
-                              'Stage $currentStage',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
+                        Container(width: 1, height: 40, color: Colors.grey[300]),
+                        _buildProgressItem(
+                          context,
+                          Icons.extension,
+                          '총 스테이지',
+                          '${puzzles.length}개',
+                          Theme.of(context).colorScheme.primary,
                         ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildPuzzleCard(context, currentPuzzle, currentStage),
+                Text(
+                  '플레이 가능한 스테이지',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 16),
+                // 퍼즐 목록 (완료되지 않은 것만 표시)
+                ...puzzles.asMap().entries.where((entry) {
+                  final puzzle = entry.value;
+                  final isCompleted = userProgress?.isPuzzleCompleted(puzzle.id) ?? false;
+                  final isUnlocked = userProgress?.isPuzzleUnlocked(puzzle.id) ?? false;
+                  // 완료되지 않았고 잠금 해제된 퍼즐만 표시
+                  return !isCompleted && isUnlocked;
+                }).map((entry) {
+                  final index = entry.key;
+                  final puzzle = entry.value;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildPuzzleCard(
+                      context,
+                      puzzle,
+                      index + 1,
+                      isCompleted: false,
+                      isUnlocked: true,
+                    ),
+                  );
+                }).toList(),
+                // 플레이 가능한 스테이지가 없는 경우
+                if (puzzles.every((puzzle) => userProgress?.isPuzzleCompleted(puzzle.id) ?? false))
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.celebration,
+                            size: 80,
+                            color: Colors.amber,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            '모든 스테이지를 완료했습니다!',
+                            style: Theme.of(context).textTheme.titleLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '정말 대단합니다! 🎉',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (puzzles.where((puzzle) {
+                  final isCompleted = userProgress?.isPuzzleCompleted(puzzle.id) ?? false;
+                  final isUnlocked = userProgress?.isPuzzleUnlocked(puzzle.id) ?? false;
+                  return !isCompleted && isUnlocked;
+                }).isEmpty && !puzzles.every((puzzle) => userProgress?.isPuzzleCompleted(puzzle.id) ?? false))
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Text(
+                        '현재 플레이 가능한 스테이지가 없습니다',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
               ],
             ),
           );
@@ -91,23 +132,52 @@ class PuzzleListScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildProgressItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 28),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPuzzleCard(
     BuildContext context,
     PuzzleModel puzzle,
-    int stageNumber,
-  ) {
+    int stageNumber, {
+    required bool isCompleted,
+    required bool isUnlocked,
+  }) {
     return Card(
-      elevation: 4,
+      elevation: isUnlocked ? 4 : 2,
       child: InkWell(
-        onTap: () {
-          // TODO: Navigate to puzzle detail screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${puzzle.title} 시작!'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
-        },
+        onTap: isUnlocked
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WaterSortPuzzleScreen(puzzle: puzzle),
+                  ),
+                );
+              }
+            : null,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -116,33 +186,97 @@ class PuzzleListScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: _getDifficultyColor(puzzle.difficulty).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _getDifficultyColor(puzzle.difficulty),
-                        width: 2,
+                  Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: _getDifficultyColor(puzzle.difficulty).withOpacity(isUnlocked ? 0.1 : 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _getDifficultyColor(puzzle.difficulty).withOpacity(isUnlocked ? 1.0 : 0.3),
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          isCompleted
+                              ? Icons.check_circle
+                              : isUnlocked
+                                  ? Icons.extension
+                                  : Icons.lock,
+                          size: 40,
+                          color: _getDifficultyColor(puzzle.difficulty).withOpacity(isUnlocked ? 1.0 : 0.3),
+                        ),
                       ),
-                    ),
-                    child: Icon(
-                      Icons.extension,
-                      size: 40,
-                      color: _getDifficultyColor(puzzle.difficulty),
-                    ),
+                      if (isCompleted)
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          puzzle.title,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                puzzle.title,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: isUnlocked ? null : Colors.grey,
+                                    ),
                               ),
+                            ),
+                            if (isCompleted)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  '완료',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            if (!isUnlocked)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  '잠김',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -197,11 +331,10 @@ class PuzzleListScreen extends StatelessWidget {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // TODO: Navigate to puzzle detail screen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('퍼즐 시작!'),
-                      duration: Duration(seconds: 1),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WaterSortPuzzleScreen(puzzle: puzzle),
                     ),
                   );
                 },

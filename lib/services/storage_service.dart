@@ -72,6 +72,11 @@ class StorageService {
     return todayDate.isAfter(lastResetDate);
   }
 
+  Future<void> clearUserProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userProgressKey);
+  }
+
   Future<void> clearAllData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

@@ -19,6 +19,13 @@ class GameProvider with ChangeNotifier {
       .toList();
 
   Future<void> initialize() async {
+    // 개발 모드: 앱 재시작 시 진행 상황 초기화
+    const bool isDevelopmentMode = true; // 배포 시 false로 변경
+
+    if (isDevelopmentMode) {
+      await _storageService.clearUserProgress();
+    }
+
     await _loadUserProgress();
     _initializePuzzles();
   }
@@ -31,6 +38,7 @@ class GameProvider with ChangeNotifier {
         userId: 'user_001',
         lastUpdated: DateTime.now(),
         unlockedPuzzles: ['puzzle_001'],
+        availableHints: 3, // 시작 시 힌트 3개 제공
       );
       await _saveUserProgress();
     }
@@ -39,42 +47,71 @@ class GameProvider with ChangeNotifier {
 
   void _initializePuzzles() {
     _puzzles = [
+      // 쉬움: 5x5 = 25조각
       PuzzleModel(
         id: 'puzzle_001',
-        title: '시작 퍼즐',
-        description: '첫 번째 퍼즐입니다. 간단한 문제로 시작해보세요!',
-        imageUrl: 'assets/puzzles/puzzle_001.jpg',
+        title: '스테이지 1',
+        description: '첫 번째 퍼즐입니다. 숨겨진 단어를 찾아보세요!',
+        imageUrl: '',
         difficulty: 1,
+        gridRows: 5,
+        gridColumns: 5,
+        answer: '시작',
+        hints: [
+          '첫 번째 힌트: 무언가를 처음 하는 것',
+          '두 번째 힌트: 출발과 비슷한 의미',
+          '세 번째 힌트: ㅅㅈ',
+        ],
         requiredSteps: 0,
         hintsAvailable: 3,
       ),
+      // 일반: 5x10 = 50조각
       PuzzleModel(
         id: 'puzzle_002',
-        title: '2km 걷기 퍼즐',
-        description: '2km를 걸으면 힌트를 받을 수 있습니다.',
-        imageUrl: 'assets/puzzles/puzzle_002.jpg',
+        title: '스테이지 2',
+        description: '조금 더 많은 조각이 있습니다. 걸으면서 힌트를 얻으세요!',
+        imageUrl: '',
         difficulty: 2,
+        gridRows: 5,
+        gridColumns: 10,
+        answer: '일산호수공원',
+        hints: [
+          '첫 번째 힌트: 고양시에 있는 유명한 장소',
+          '두 번째 힌트: 물과 자연이 있는 곳',
+        ],
         requiredSteps: 2620,
         hintsAvailable: 2,
       ),
+      // 어려움: 5x15 = 75조각
       PuzzleModel(
         id: 'puzzle_003',
-        title: '5km 걷기 퍼즐',
-        description: '5km를 걸으면 자동으로 클리어됩니다!',
-        imageUrl: 'assets/puzzles/puzzle_003.jpg',
+        title: '스테이지 3',
+        description: '더욱 많은 조각! 집중력이 필요합니다.',
+        imageUrl: '',
         difficulty: 3,
+        gridRows: 5,
+        gridColumns: 15,
+        answer: '퍼즐',
+        hints: [
+          '첫 번째 힌트: 조각을 맞추는 게임',
+        ],
         requiredSteps: 6562,
         hintsAvailable: 1,
       ),
+      // 매우 어려움: 10x10 = 100조각
       PuzzleModel(
-        id: 'puzzle_seoul_tower',
-        title: 'N서울타워 퍼즐',
-        description: 'N서울타워 근처에서만 풀 수 있는 특별한 퍼즐입니다.',
-        imageUrl: 'assets/puzzles/puzzle_seoul_tower.jpg',
+        id: 'puzzle_004',
+        title: '스테이지 4',
+        description: '최고 난이도! 100개의 조각을 맞춰보세요.',
+        imageUrl: '',
         difficulty: 4,
-        isLocationBased: true,
-        latitude: 37.5512,
-        longitude: 126.9882,
+        gridRows: 10,
+        gridColumns: 10,
+        answer: '성공',
+        hints: [
+          '첫 번째 힌트: 목표를 이루었을 때',
+          '두 번째 힌트: 실패의 반대',
+        ],
         requiredSteps: 0,
         hintsAvailable: 2,
       ),

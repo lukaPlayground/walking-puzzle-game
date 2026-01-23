@@ -9,6 +9,10 @@ class PuzzleModel {
   final double? longitude;
   final int requiredSteps;
   final int hintsAvailable;
+  final int gridRows;
+  final int gridColumns;
+  final String answer;
+  final List<String> hints;
 
   PuzzleModel({
     required this.id,
@@ -16,6 +20,10 @@ class PuzzleModel {
     required this.description,
     required this.imageUrl,
     required this.difficulty,
+    required this.gridRows,
+    required this.gridColumns,
+    required this.answer,
+    this.hints = const [],
     this.isLocationBased = false,
     this.latitude,
     this.longitude,
@@ -30,6 +38,10 @@ class PuzzleModel {
       description: json['description'] as String,
       imageUrl: json['imageUrl'] as String,
       difficulty: json['difficulty'] as int,
+      gridRows: json['gridRows'] as int,
+      gridColumns: json['gridColumns'] as int,
+      answer: json['answer'] as String,
+      hints: (json['hints'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
       isLocationBased: json['isLocationBased'] as bool? ?? false,
       latitude: json['latitude'] as double?,
       longitude: json['longitude'] as double?,
@@ -45,6 +57,10 @@ class PuzzleModel {
       'description': description,
       'imageUrl': imageUrl,
       'difficulty': difficulty,
+      'gridRows': gridRows,
+      'gridColumns': gridColumns,
+      'answer': answer,
+      'hints': hints,
       'isLocationBased': isLocationBased,
       'latitude': latitude,
       'longitude': longitude,
@@ -59,6 +75,10 @@ class PuzzleModel {
     String? description,
     String? imageUrl,
     int? difficulty,
+    int? gridRows,
+    int? gridColumns,
+    String? answer,
+    List<String>? hints,
     bool? isLocationBased,
     double? latitude,
     double? longitude,
@@ -71,6 +91,10 @@ class PuzzleModel {
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
       difficulty: difficulty ?? this.difficulty,
+      gridRows: gridRows ?? this.gridRows,
+      gridColumns: gridColumns ?? this.gridColumns,
+      answer: answer ?? this.answer,
+      hints: hints ?? this.hints,
       isLocationBased: isLocationBased ?? this.isLocationBased,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
@@ -78,4 +102,6 @@ class PuzzleModel {
       hintsAvailable: hintsAvailable ?? this.hintsAvailable,
     );
   }
+
+  int get totalPieces => gridRows * gridColumns;
 }

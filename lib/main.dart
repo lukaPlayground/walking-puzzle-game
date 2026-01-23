@@ -52,6 +52,8 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
+  bool _isInitializing = true;
+  String _errorMessage = '';
 
   final List<Widget> _screens = const [
     PuzzleListScreen(),
@@ -61,26 +63,87 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeProviders();
+    _initializeApp();
   }
 
-  Future<void> _initializeProviders() async {
-    final gameProvider = context.read<GameProvider>();
-    final stepCounterProvider = context.read<StepCounterProvider>();
-    final locationProvider = context.read<LocationProvider>();
+  Future<void> _initializeApp() async {
+    try {
+      // Provider들을 안전하게 가져오기 (mounted 체크 후)
+      if (!mounted) return;
 
-    await Future.wait([
-      gameProvider.initialize(),
-      stepCounterProvider.initialize(),
-      locationProvider.initialize(),
-    ]);
+      final gameProvider = Provider.of<GameProvider>(context, listen: false);
+      final stepCounterProvider = Provider.of<StepCounterProvider>(context, listen: false);
+      final locationProvider = Provider.of<LocationProvider>(context, listen: false);
 
-    stepCounterProvider.startTracking();
-    locationProvider.startTracking();
+      // 모든 Provider 초기화
+      await Future.wait([
+        gameProvider.initialize(),
+        stepCounterProvider.initialize(),
+        locationProvider.initialize(),
+      ]);
+
+      // 추적 시작
+      stepCounterProvider.startTracking();
+      locationProvider.startTracking();
+
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+          _errorMessage = '초기화 중 오류 발생: $e';
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isInitializing) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('앱을 초기화하는 중...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_errorMessage.isNotEmpty) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(_errorMessage, textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _isInitializing = true;
+                    _errorMessage = '';
+                  });
+                  _initializeApp();
+                },
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(
