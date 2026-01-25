@@ -24,6 +24,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
   int maxMoves = 0;
   int colorCount = 0;
   bool isColorblindMode = false;
+  int regenerationSeed = 0; // 재생성할 때마다 증가하는 시드
 
   @override
   void initState() {
@@ -34,29 +35,34 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
   void _generatePuzzle() {
     final difficulty = widget.puzzle.difficulty;
     int tubeCount;
+    int emptyTubeCount;
     const int capacity = 4;
-    const int emptyTubeCount = 1; // 빈 튜브 1개
 
-    // 난이도에 따른 총 튜브 수
+    // 난이도에 따른 색상 수와 빈 튜브 수 자동 계산
     switch (difficulty) {
       case 1: // 쉬움
-        tubeCount = 4; // 색상 3개 + 빈 튜브 1개
+        colorCount = 3;
+        emptyTubeCount = 1; // 최소 1개
         break;
       case 2: // 일반
-        tubeCount = 5; // 색상 4개 + 빈 튜브 1개
+        colorCount = 4;
+        emptyTubeCount = 1; // 최소 1개
         break;
       case 3: // 어려움
-        tubeCount = 6; // 색상 5개 + 빈 튜브 1개
+        colorCount = 5;
+        emptyTubeCount = 2; // 색상 많아지면 빈 튜브 2개
         break;
       case 4: // 지옥
-        tubeCount = 7; // 색상 6개 + 빈 튜브 1개
+        colorCount = 6;
+        emptyTubeCount = 2; // 색상 많아지면 빈 튜브 2개
         break;
       default:
-        tubeCount = 4;
+        colorCount = 3;
+        emptyTubeCount = 1;
     }
 
-    // 색상 수 = 채워진 튜브 수
-    colorCount = tubeCount - emptyTubeCount;
+    // 총 튜브 수 = 색상 수 + 빈 튜브 수
+    tubeCount = colorCount + emptyTubeCount;
 
     // 이동 횟수 제한 설정 (난이도에 따라 조정)
     // 기본: (색상 수 * 8) + 추가 여유
@@ -88,8 +94,8 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
       }
     }
 
-    // 퍼즐 ID를 기반으로 시드 생성하여 동일한 배치 보장
-    final seed = widget.puzzle.id.hashCode;
+    // 퍼즐 ID + 재생성 시드를 기반으로 시드 생성
+    final seed = widget.puzzle.id.hashCode + regenerationSeed;
     final random = Random(seed);
 
     // 섞기 (Fisher-Yates shuffle with seed)
@@ -236,6 +242,23 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
       selectedTubeId = null;
       _generatePuzzle();
     });
+  }
+
+  void _regeneratePuzzle() {
+    setState(() {
+      moveCount = 0;
+      selectedTubeId = null;
+      regenerationSeed++; // 시드 증가하여 완전히 다른 판 생성
+      _generatePuzzle();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('새로운 판을 생성했습니다!'),
+        backgroundColor: Colors.blue,
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   void _useHint() {
@@ -393,6 +416,11 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: _resetPuzzle,
             tooltip: '다시 시작',
+          ),
+          IconButton(
+            icon: const Icon(Icons.shuffle),
+            onPressed: _regeneratePuzzle,
+            tooltip: '새 판 생성',
           ),
         ],
       ),
