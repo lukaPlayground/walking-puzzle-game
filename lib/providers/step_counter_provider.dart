@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import '../services/health_service.dart';
 import '../services/storage_service.dart';
 
@@ -12,6 +14,14 @@ class StepCounterProvider with ChangeNotifier {
   bool _isTracking = false;
   bool _hasPermission = false;
   Timer? _updateTimer;
+
+  // 흔들기 감지를 위한 변수들
+  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  DateTime? _lastShakeTime;
+  double _accumulatedSteps = 0.0; // 누적된 소수점 걸음 수
+  static const double _shakeThreshold = 15.0; // 흔들기 감지 임계값
+  static const int _shakeCooldownMs = 500; // 0.5초 쿨다운
+  static const double _stepsPerShake = 0.5; // 흔들기 한 번당 0.5보
 
   int get todaySteps => _todaySteps;
   int get totalSteps => _totalSteps;
@@ -99,6 +109,49 @@ class StepCounterProvider with ChangeNotifier {
     _updateTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       fetchTodaySteps();
     });
+
+    // 흔들기 감지 시작 (실내 테스트용)
+    _startShakeDetection();
+  }
+
+  /// 흔들기 감지 시작 (디버그/실내 테스트용)
+  void _startShakeDetection() {
+    _accelerometerSubscription = accelerometerEventStream().listen((event) {
+      final now = DateTime.now();
+
+      // 쿨다운 체크
+      if (_lastShakeTime != null &&
+          now.difference(_lastShakeTime!).inMilliseconds < _shakeCooldownMs) {
+        return;
+      }
+
+      // 가속도 크기 계산
+      final acceleration = sqrt(
+        event.x * event.x + event.y * event.y + event.z * event.z,
+      );
+
+      // 흔들기 감지
+      if (acceleration > _shakeThreshold) {
+        _lastShakeTime = now;
+        _simulateSteps(_stepsPerShake); // 0.5보 추가
+        print('흔들기 감지! 0.5보 추가됨 (총: $_todaySteps보)');
+      }
+    });
+  }
+
+  /// 시뮬레이션 걸음 수 추가 (테스트용)
+  void _simulateSteps(double steps) {
+    _accumulatedSteps += steps;
+
+    // 1보 이상 누적되면 실제 걸음 수에 추가
+    if (_accumulatedSteps >= 1.0) {
+      int wholSteps = _accumulatedSteps.floor();
+      _todaySteps += wholSteps;
+      _totalSteps += wholSteps;
+      _accumulatedSteps -= wholSteps;
+      _storageService.saveTotalSteps(_totalSteps);
+      notifyListeners();
+    }
   }
 
   /// 추적 중지
@@ -107,6 +160,8 @@ class StepCounterProvider with ChangeNotifier {
 
     _updateTimer?.cancel();
     _updateTimer = null;
+    _accelerometerSubscription?.cancel();
+    _accelerometerSubscription = null;
     _isTracking = false;
     notifyListeners();
   }
@@ -134,6 +189,7 @@ class StepCounterProvider with ChangeNotifier {
   @override
   void dispose() {
     _updateTimer?.cancel();
+    _accelerometerSubscription?.cancel();
     super.dispose();
   }
 }

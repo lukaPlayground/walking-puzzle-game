@@ -68,11 +68,25 @@ class GameProvider with ChangeNotifier {
         requiredSteps: 0,
         hintsAvailable: 0,
       ),
-      // 스테이지 2: 쉬움
+      // 스테이지 2: 일반
       PuzzleModel(
         id: 'puzzle_002',
         title: '스테이지 2',
-        description: '두 번째 스테이지입니다. 색상을 잘 구분해보세요!',
+        description: '난이도가 조금 올라갑니다!',
+        imageUrl: '',
+        difficulty: 2,
+        gridRows: 6,
+        gridColumns: 6,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 3: 쉬움
+      PuzzleModel(
+        id: 'puzzle_003',
+        title: '스테이지 3',
+        description: '다시 쉬운 단계! 색상을 잘 구분해보세요.',
         imageUrl: '',
         difficulty: 1,
         gridRows: 5,
@@ -82,29 +96,15 @@ class GameProvider with ChangeNotifier {
         requiredSteps: 0,
         hintsAvailable: 0,
       ),
-      // 스테이지 3: 일반
-      PuzzleModel(
-        id: 'puzzle_003',
-        title: '스테이지 3',
-        description: '난이도가 조금 올라갑니다. 2km를 걸으면 잠금 해제!',
-        imageUrl: '',
-        difficulty: 2,
-        gridRows: 6,
-        gridColumns: 6,
-        answer: '',
-        hints: [],
-        requiredSteps: 2620, // 약 2km
-        hintsAvailable: 0,
-      ),
-      // 스테이지 4: 일반
+      // 스테이지 4: 어려움
       PuzzleModel(
         id: 'puzzle_004',
         title: '스테이지 4',
-        description: '점점 복잡해집니다. 집중력을 발휘하세요!',
+        description: '고난이도 스테이지! 집중력을 발휘하세요.',
         imageUrl: '',
-        difficulty: 2,
-        gridRows: 6,
-        gridColumns: 6,
+        difficulty: 3,
+        gridRows: 7,
+        gridColumns: 7,
         answer: '',
         hints: [],
         requiredSteps: 0,
@@ -124,25 +124,39 @@ class GameProvider with ChangeNotifier {
         requiredSteps: 0,
         hintsAvailable: 0,
       ),
-      // 스테이지 6: 어려움
+      // 스테이지 6: 매우 어려움
       PuzzleModel(
         id: 'puzzle_006',
         title: '스테이지 6',
-        description: '고난이도 스테이지! 5km를 걸으면 잠금 해제됩니다.',
+        description: '챌린지 레벨! 많은 색상을 정리해야 합니다.',
         imageUrl: '',
-        difficulty: 3,
-        gridRows: 7,
-        gridColumns: 7,
+        difficulty: 4,
+        gridRows: 8,
+        gridColumns: 8,
         answer: '',
         hints: [],
-        requiredSteps: 6562, // 약 5km
+        requiredSteps: 0,
         hintsAvailable: 0,
       ),
-      // 스테이지 7: 어려움
+      // 스테이지 7: 일반
       PuzzleModel(
         id: 'puzzle_007',
         title: '스테이지 7',
-        description: '많은 색상을 정리해야 합니다. 신중하게 움직이세요!',
+        description: '다시 중간 난이도입니다. 신중하게 움직이세요!',
+        imageUrl: '',
+        difficulty: 2,
+        gridRows: 6,
+        gridColumns: 6,
+        answer: '',
+        hints: [],
+        requiredSteps: 0,
+        hintsAvailable: 0,
+      ),
+      // 스테이지 8: 어려움
+      PuzzleModel(
+        id: 'puzzle_008',
+        title: '스테이지 8',
+        description: '고난이도가 다시 등장! 인내심이 필요합니다.',
         imageUrl: '',
         difficulty: 3,
         gridRows: 7,
@@ -150,27 +164,13 @@ class GameProvider with ChangeNotifier {
         answer: '',
         hints: [],
         requiredSteps: 0,
-        hintsAvailable: 0,
-      ),
-      // 스테이지 8: 매우 어려움
-      PuzzleModel(
-        id: 'puzzle_008',
-        title: '스테이지 8',
-        description: '챌린지 레벨! 10km를 걸으면 잠금 해제됩니다.',
-        imageUrl: '',
-        difficulty: 4,
-        gridRows: 8,
-        gridColumns: 8,
-        answer: '',
-        hints: [],
-        requiredSteps: 13123, // 약 10km
         hintsAvailable: 0,
       ),
       // 스테이지 9: 매우 어려움
       PuzzleModel(
         id: 'puzzle_009',
         title: '스테이지 9',
-        description: '최고 난이도 직전! 인내심이 필요합니다.',
+        description: '최고 난이도! 거의 다 왔습니다.',
         imageUrl: '',
         difficulty: 4,
         gridRows: 8,
@@ -180,7 +180,7 @@ class GameProvider with ChangeNotifier {
         requiredSteps: 0,
         hintsAvailable: 0,
       ),
-      // 스테이지 10: 지옥
+      // 스테이지 10: 매우 어려움 (최종 보스)
       PuzzleModel(
         id: 'puzzle_010',
         title: '스테이지 10',
@@ -234,9 +234,8 @@ class GameProvider with ChangeNotifier {
     final completedIndex = _puzzles.indexWhere((p) => p.id == completedPuzzleId);
     if (completedIndex >= 0 && completedIndex < _puzzles.length - 1) {
       final nextPuzzle = _puzzles[completedIndex + 1];
-      if (!nextPuzzle.isLocationBased) {
-        await unlockPuzzle(nextPuzzle.id);
-      }
+      // 위치 기반 여부와 관계없이 다음 스테이지 자동 잠금 해제
+      await unlockPuzzle(nextPuzzle.id);
     }
   }
 
@@ -298,34 +297,7 @@ class GameProvider with ChangeNotifier {
       print('🎁 걸음 수 보상: 힌트 $newHints개 획득! (${todaySteps}보 달성)');
     }
 
-    // 걸음 수 기반 퍼즐 잠금 해제 체크
-    await _checkAndUnlockPuzzlesBySteps(todaySteps);
-  }
-
-  /// 걸음 수에 따라 퍼즐 자동 잠금 해제
-  Future<void> _checkAndUnlockPuzzlesBySteps(int todaySteps) async {
-    if (_userProgress == null) return;
-
-    bool hasUnlockedAny = false;
-
-    for (final puzzle in _puzzles) {
-      // 이미 잠금 해제된 퍼즐은 스킵
-      if (_userProgress!.isPuzzleUnlocked(puzzle.id)) continue;
-
-      // 위치 기반 퍼즐은 스킵 (GPS로만 잠금 해제)
-      if (puzzle.isLocationBased) continue;
-
-      // 필요한 걸음 수를 충족했는지 확인
-      if (todaySteps >= puzzle.requiredSteps) {
-        await unlockPuzzle(puzzle.id);
-        hasUnlockedAny = true;
-        print('🔓 걸음 수 잠금 해제: ${puzzle.title} (${todaySteps}/${puzzle.requiredSteps}보)');
-      }
-    }
-
-    if (hasUnlockedAny) {
-      notifyListeners();
-    }
+    // 걸음 수 기반 자동 잠금 해제는 제거 (순차적 진행만 허용)
   }
 
   /// 오늘 걸음 수 기준으로 다음 힌트까지 남은 걸음 수 계산

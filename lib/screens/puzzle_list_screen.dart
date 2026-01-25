@@ -245,6 +245,8 @@ class PuzzleListScreen extends StatelessWidget {
     required bool isCompleted,
     required bool isUnlocked,
   }) {
+    final gameProvider = Provider.of<GameProvider>(context, listen: false);
+    final availableHints = gameProvider.userProgress?.availableHints ?? 0;
     return Card(
       elevation: isUnlocked ? 4 : 2,
       child: InkWell(
@@ -417,7 +419,7 @@ class PuzzleListScreen extends StatelessWidget {
                   _buildInfoChip(
                     context,
                     Icons.lightbulb_outline,
-                    '힌트 ${puzzle.hintsAvailable}개',
+                    '보유 힌트 $availableHints개',
                     Colors.orange,
                   ),
                   if (puzzle.isLocationBased)
