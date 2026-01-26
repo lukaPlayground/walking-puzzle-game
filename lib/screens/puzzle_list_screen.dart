@@ -41,15 +41,15 @@ class PuzzleListScreen extends StatelessWidget {
                           context,
                           Icons.flag,
                           '완료',
-                          '$completedCount/${puzzles.length}',
+                          '$completedCount개',
                           Colors.green,
                         ),
                         Container(width: 1, height: 40, color: Colors.grey[300]),
                         _buildProgressItem(
                           context,
-                          Icons.extension,
-                          '총 스테이지',
-                          '${puzzles.length}개',
+                          Icons.all_inclusive,
+                          '현재 레벨',
+                          '${puzzles.length}',
                           Theme.of(context).colorScheme.primary,
                         ),
                       ],
@@ -89,45 +89,25 @@ class PuzzleListScreen extends StatelessWidget {
                     ),
                   );
                 }).toList(),
-                // 플레이 가능한 스테이지가 없는 경우
-                if (puzzles.every((puzzle) => userProgress?.isPuzzleCompleted(puzzle.id) ?? false))
+                // 플레이 가능한 스테이지가 없는 경우 (무한 스테이지 모드에서는 발생하지 않음)
+                if (puzzles.where((puzzle) {
+                  final isCompleted = userProgress?.isPuzzleCompleted(puzzle.id) ?? false;
+                  final isUnlocked = userProgress?.isPuzzleUnlocked(puzzle.id) ?? false;
+                  return !isCompleted && isUnlocked;
+                }).isEmpty)
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
                       child: Column(
                         children: [
-                          Icon(
-                            Icons.celebration,
-                            size: 80,
-                            color: Colors.amber,
-                          ),
+                          const CircularProgressIndicator(),
                           const SizedBox(height: 16),
                           Text(
-                            '모든 스테이지를 완료했습니다!',
-                            style: Theme.of(context).textTheme.titleLarge,
+                            '다음 스테이지를 준비하는 중...',
+                            style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '정말 대단합니다! 🎉',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
                         ],
-                      ),
-                    ),
-                  ),
-                if (puzzles.where((puzzle) {
-                  final isCompleted = userProgress?.isPuzzleCompleted(puzzle.id) ?? false;
-                  final isUnlocked = userProgress?.isPuzzleUnlocked(puzzle.id) ?? false;
-                  return !isCompleted && isUnlocked;
-                }).isEmpty && !puzzles.every((puzzle) => userProgress?.isPuzzleCompleted(puzzle.id) ?? false))
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Text(
-                        '현재 플레이 가능한 스테이지가 없습니다',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),

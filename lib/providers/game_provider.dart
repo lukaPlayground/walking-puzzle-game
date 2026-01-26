@@ -232,10 +232,57 @@ class GameProvider with ChangeNotifier {
 
   Future<void> _unlockNextPuzzle(String completedPuzzleId) async {
     final completedIndex = _puzzles.indexWhere((p) => p.id == completedPuzzleId);
+
     if (completedIndex >= 0 && completedIndex < _puzzles.length - 1) {
+      // 다음 스테이지가 있으면 잠금 해제
       final nextPuzzle = _puzzles[completedIndex + 1];
-      // 위치 기반 여부와 관계없이 다음 스테이지 자동 잠금 해제
       await unlockPuzzle(nextPuzzle.id);
+    } else if (completedIndex == _puzzles.length - 1) {
+      // 마지막 스테이지 완료 시 새로운 스테이지 생성
+      _generateNextStage();
+    }
+  }
+
+  void _generateNextStage() {
+    final nextStageNumber = _puzzles.length + 1;
+
+    // 난이도를 순환 (1→2→3→4→1...)
+    final difficulty = ((nextStageNumber - 1) % 4) + 1;
+
+    final newPuzzle = PuzzleModel(
+      id: 'puzzle_${nextStageNumber.toString().padLeft(3, '0')}',
+      title: '스테이지 $nextStageNumber',
+      description: _getDescriptionForDifficulty(difficulty),
+      imageUrl: '',
+      difficulty: difficulty,
+      gridRows: 5 + difficulty,
+      gridColumns: 5 + difficulty,
+      answer: '',
+      hints: [],
+      requiredSteps: 0,
+      hintsAvailable: 0,
+    );
+
+    _puzzles.add(newPuzzle);
+
+    // 새로 생성된 스테이지 자동 잠금 해제
+    unlockPuzzle(newPuzzle.id);
+
+    notifyListeners();
+  }
+
+  String _getDescriptionForDifficulty(int difficulty) {
+    switch (difficulty) {
+      case 1:
+        return '쉬운 난이도입니다. 차근차근 풀어보세요!';
+      case 2:
+        return '일반 난이도입니다. 집중력을 발휘하세요!';
+      case 3:
+        return '어려운 난이도입니다. 신중하게 움직이세요!';
+      case 4:
+        return '매우 어려운 난이도입니다. 모든 스킬을 동원하세요!';
+      default:
+        return '새로운 도전이 시작됩니다!';
     }
   }
 
