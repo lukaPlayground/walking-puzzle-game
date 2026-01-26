@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/game_provider.dart';
 import '../providers/step_counter_provider.dart';
+import '../providers/locale_provider.dart';
 import '../services/storage_service.dart';
+import '../l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -79,9 +81,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           const SizedBox(height: 16),
+          _buildLanguageSection(context),
+          const Divider(),
           _buildSection(
             context,
-            '앱 정보',
+            AppLocalizations.of(context)!.appInfo,
             [
               ListTile(
                 leading: const Icon(Icons.info_outline),
@@ -166,6 +170,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLanguageSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
+    return _buildSection(
+      context,
+      l10n.languageSettings,
+      [
+        ListTile(
+          leading: const Icon(Icons.language),
+          title: Text(l10n.language),
+          trailing: DropdownButton<Locale>(
+            value: localeProvider.locale,
+            underline: const SizedBox(),
+            items: const [
+              DropdownMenuItem(
+                value: Locale('ko'),
+                child: Text('한국어'),
+              ),
+              DropdownMenuItem(
+                value: Locale('en'),
+                child: Text('English'),
+              ),
+            ],
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                localeProvider.setLocale(newLocale);
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 

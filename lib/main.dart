@@ -5,13 +5,16 @@
 // ═══════════════════════════════════════
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'providers/game_provider.dart';
 import 'providers/step_counter_provider.dart';
 import 'providers/location_provider.dart';
+import 'providers/locale_provider.dart';
 import 'screens/puzzle_list_screen.dart';
 import 'screens/settings_screen.dart';
 import 'utils/app_identity.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   // Print creator signature to debug console
@@ -26,27 +29,43 @@ class WalkingPuzzleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => GameProvider()),
         ChangeNotifierProvider(create: (_) => StepCounterProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
-      child: MaterialApp(
-        title: 'Walking Puzzle Game',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-        ),
-        home: const MainNavigationScreen(),
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, child) {
+          return MaterialApp(
+            title: 'WalkingPuzzle',
+            locale: localeProvider.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ko'), // Korean
+              Locale('en'), // English
+            ],
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.light,
+              ),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+            ),
+            home: const MainNavigationScreen(),
+          );
+        },
       ),
     );
   }
