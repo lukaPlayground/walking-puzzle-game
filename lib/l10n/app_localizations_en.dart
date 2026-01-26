@@ -198,4 +198,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get completed_exclamation => 'Completed!';
+
+  @override
+  String get failed_exclamation => 'Move Limit Exceeded!';
+
+  @override
+  String perfect_clear(int moves) {
+    return 'Fantastic! You completed the puzzle in $moves moves!\\n⭐⭐⭐ Perfect Clear!';
+  }
+
+  @override
+  String great_clear(int moves) {
+    return 'Great! You completed the puzzle in $moves moves!\\n⭐⭐ Excellent Clear!';
+  }
+
+  @override
+  String good_clear(int moves) {
+    return 'Success! You completed the puzzle in $moves moves!\\n⭐ Clear!';
+  }
+
+  @override
+  String max_moves_exceeded(int maxMoves) {
+    return 'Maximum moves ($maxMoves) exceeded.\\nTry again!';
+  }
+
+  @override
+  String get confirm => 'OK';
+
+  @override
+  String get moves_count => 'Moves';
+
+  @override
+  String get completed_tubes => 'Completed Tubes';
+
+  @override
+  String hint_used(int remaining) {
+    return 'Hint used! (Remaining: $remaining)';
+  }
+
+  @override
+  String use_hint_count(int count) {
+    return 'Use Hint ($count)';
+  }
+
+  @override
+  String get colorblind_mode => 'Colorblind Mode';
+
+  @override
+  String get restart => 'Restart';
+
+  @override
+  String get new_board => 'New Board';
+
+  @override
+  String get new_board_generated => 'New board generated!';
+
+  @override
+  String get no_more_moves => 'No more moves available';
+
+  @override
+  String get tutorial_title => 'How to Play';
+
+  @override
+  String get tutorial_welcome => 'Welcome to WalkingPuzzle!';
+
+  @override
+  String get tutorial_step1_title => 'Water Sort Puzzle';
+
+  @override
+  String get tutorial_step1_desc => 'Sort colors to complete tubes';
+
+  @override
+  String get tutorial_step2_title => 'Step Rewards';
+
+  @override
+  String get tutorial_step2_desc =>
+      'Walk to earn hints and\\nunlock new stages';
+
+  @override
+  String get tutorial_step3_title => 'Landmark Collection';
+
+  @override
+  String get tutorial_step3_desc =>
+      'Visit special places to\\ncollect landmarks';
+
+  @override
+  String get tutorial_start => 'Start';
+
+  @override
+  String get tutorial_next => 'Next';
+
+  @override
+  String get tutorial_prev => 'Previous';
+
+  @override
+  String get all_stages_completed => '🎉 All stages completed!';
+
+  @override
+  String get congratulations => 'Congratulations!';
 }

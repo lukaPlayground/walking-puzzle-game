@@ -198,4 +198,103 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get completed_exclamation => '완료!';
+
+  @override
+  String get failed_exclamation => '이동 횟수 초과!';
+
+  @override
+  String perfect_clear(int moves) {
+    return '환상적입니다! $moves번 만에 퍼즐을 완성했습니다!\\n⭐⭐⭐ 완벽한 클리어!';
+  }
+
+  @override
+  String great_clear(int moves) {
+    return '훌륭합니다! $moves번 만에 퍼즐을 완성했습니다!\\n⭐⭐ 멋진 클리어!';
+  }
+
+  @override
+  String good_clear(int moves) {
+    return '성공! $moves번 만에 퍼즐을 완성했습니다!\\n⭐ 클리어!';
+  }
+
+  @override
+  String max_moves_exceeded(int maxMoves) {
+    return '최대 이동 횟수($maxMoves)를 초과했습니다.\\n다시 도전해보세요!';
+  }
+
+  @override
+  String get confirm => '확인';
+
+  @override
+  String get moves_count => '이동 횟수';
+
+  @override
+  String get completed_tubes => '완료된 튜브';
+
+  @override
+  String hint_used(int remaining) {
+    return '힌트를 사용했습니다! (남은 힌트: $remaining개)';
+  }
+
+  @override
+  String use_hint_count(int count) {
+    return '힌트 사용 ($count개)';
+  }
+
+  @override
+  String get colorblind_mode => '색약 모드';
+
+  @override
+  String get restart => '다시 시작';
+
+  @override
+  String get new_board => '새 판 생성';
+
+  @override
+  String get new_board_generated => '새로운 판을 생성했습니다!';
+
+  @override
+  String get no_more_moves => '더 이상 이동할 수 없습니다';
+
+  @override
+  String get tutorial_title => '게임 방법';
+
+  @override
+  String get tutorial_welcome => 'WalkingPuzzle에 오신 것을 환영합니다!';
+
+  @override
+  String get tutorial_step1_title => '물 정렬 퍼즐';
+
+  @override
+  String get tutorial_step1_desc => '같은 색깔끼리 모아 튜브를 완성하세요';
+
+  @override
+  String get tutorial_step2_title => '걸음 수 보상';
+
+  @override
+  String get tutorial_step2_desc => '걸으면서 힌트를 획득하고\\n새로운 스테이지를 잠금 해제하세요';
+
+  @override
+  String get tutorial_step3_title => '랜드마크 수집';
+
+  @override
+  String get tutorial_step3_desc => '특별한 장소를 방문하여\\n랜드마크를 수집하세요';
+
+  @override
+  String get tutorial_start => '시작하기';
+
+  @override
+  String get tutorial_next => '다음';
+
+  @override
+  String get tutorial_prev => '이전';
+
+  @override
+  String get all_stages_completed => '🎉 모든 스테이지를 완료했습니다!';
+
+  @override
+  String get congratulations => '축하합니다!';
 }

@@ -8,6 +8,7 @@ import '../models/puzzle_model.dart';
 import 'water_sort_puzzle_screen.dart';
 import 'tutorial_screen.dart';
 import 'collection_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class PuzzleListScreen extends StatelessWidget {
   const PuzzleListScreen({super.key});
@@ -392,7 +393,7 @@ class PuzzleListScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              _getDifficultyText(puzzle.difficulty),
+                              _getDifficultyText(puzzle.difficulty, context),
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -515,18 +516,19 @@ class PuzzleListScreen extends StatelessWidget {
     }
   }
 
-  String _getDifficultyText(int difficulty) {
+  String _getDifficultyText(int difficulty, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (difficulty) {
       case 1:
-        return '쉬움';
+        return l10n.easy;
       case 2:
-        return '일반';
+        return l10n.normal;
       case 3:
-        return '어려움';
+        return l10n.hard;
       case 4:
-        return '매우 어려움';
+        return l10n.veryHard;
       default:
-        return '알 수 없음';
+        return l10n.normal;
     }
   }
 }

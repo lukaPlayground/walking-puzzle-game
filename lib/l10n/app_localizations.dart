@@ -457,6 +457,180 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'English'**
   String get english;
+
+  /// No description provided for @completed_exclamation.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료!'**
+  String get completed_exclamation;
+
+  /// No description provided for @failed_exclamation.
+  ///
+  /// In ko, this message translates to:
+  /// **'이동 횟수 초과!'**
+  String get failed_exclamation;
+
+  /// No description provided for @perfect_clear.
+  ///
+  /// In ko, this message translates to:
+  /// **'환상적입니다! {moves}번 만에 퍼즐을 완성했습니다!\\n⭐⭐⭐ 완벽한 클리어!'**
+  String perfect_clear(int moves);
+
+  /// No description provided for @great_clear.
+  ///
+  /// In ko, this message translates to:
+  /// **'훌륭합니다! {moves}번 만에 퍼즐을 완성했습니다!\\n⭐⭐ 멋진 클리어!'**
+  String great_clear(int moves);
+
+  /// No description provided for @good_clear.
+  ///
+  /// In ko, this message translates to:
+  /// **'성공! {moves}번 만에 퍼즐을 완성했습니다!\\n⭐ 클리어!'**
+  String good_clear(int moves);
+
+  /// No description provided for @max_moves_exceeded.
+  ///
+  /// In ko, this message translates to:
+  /// **'최대 이동 횟수({maxMoves})를 초과했습니다.\\n다시 도전해보세요!'**
+  String max_moves_exceeded(int maxMoves);
+
+  /// No description provided for @confirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'확인'**
+  String get confirm;
+
+  /// No description provided for @moves_count.
+  ///
+  /// In ko, this message translates to:
+  /// **'이동 횟수'**
+  String get moves_count;
+
+  /// No description provided for @completed_tubes.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료된 튜브'**
+  String get completed_tubes;
+
+  /// No description provided for @hint_used.
+  ///
+  /// In ko, this message translates to:
+  /// **'힌트를 사용했습니다! (남은 힌트: {remaining}개)'**
+  String hint_used(int remaining);
+
+  /// No description provided for @use_hint_count.
+  ///
+  /// In ko, this message translates to:
+  /// **'힌트 사용 ({count}개)'**
+  String use_hint_count(int count);
+
+  /// No description provided for @colorblind_mode.
+  ///
+  /// In ko, this message translates to:
+  /// **'색약 모드'**
+  String get colorblind_mode;
+
+  /// No description provided for @restart.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시작'**
+  String get restart;
+
+  /// No description provided for @new_board.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 판 생성'**
+  String get new_board;
+
+  /// No description provided for @new_board_generated.
+  ///
+  /// In ko, this message translates to:
+  /// **'새로운 판을 생성했습니다!'**
+  String get new_board_generated;
+
+  /// No description provided for @no_more_moves.
+  ///
+  /// In ko, this message translates to:
+  /// **'더 이상 이동할 수 없습니다'**
+  String get no_more_moves;
+
+  /// No description provided for @tutorial_title.
+  ///
+  /// In ko, this message translates to:
+  /// **'게임 방법'**
+  String get tutorial_title;
+
+  /// No description provided for @tutorial_welcome.
+  ///
+  /// In ko, this message translates to:
+  /// **'WalkingPuzzle에 오신 것을 환영합니다!'**
+  String get tutorial_welcome;
+
+  /// No description provided for @tutorial_step1_title.
+  ///
+  /// In ko, this message translates to:
+  /// **'물 정렬 퍼즐'**
+  String get tutorial_step1_title;
+
+  /// No description provided for @tutorial_step1_desc.
+  ///
+  /// In ko, this message translates to:
+  /// **'같은 색깔끼리 모아 튜브를 완성하세요'**
+  String get tutorial_step1_desc;
+
+  /// No description provided for @tutorial_step2_title.
+  ///
+  /// In ko, this message translates to:
+  /// **'걸음 수 보상'**
+  String get tutorial_step2_title;
+
+  /// No description provided for @tutorial_step2_desc.
+  ///
+  /// In ko, this message translates to:
+  /// **'걸으면서 힌트를 획득하고\\n새로운 스테이지를 잠금 해제하세요'**
+  String get tutorial_step2_desc;
+
+  /// No description provided for @tutorial_step3_title.
+  ///
+  /// In ko, this message translates to:
+  /// **'랜드마크 수집'**
+  String get tutorial_step3_title;
+
+  /// No description provided for @tutorial_step3_desc.
+  ///
+  /// In ko, this message translates to:
+  /// **'특별한 장소를 방문하여\\n랜드마크를 수집하세요'**
+  String get tutorial_step3_desc;
+
+  /// No description provided for @tutorial_start.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작하기'**
+  String get tutorial_start;
+
+  /// No description provided for @tutorial_next.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음'**
+  String get tutorial_next;
+
+  /// No description provided for @tutorial_prev.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전'**
+  String get tutorial_prev;
+
+  /// No description provided for @all_stages_completed.
+  ///
+  /// In ko, this message translates to:
+  /// **'🎉 모든 스테이지를 완료했습니다!'**
+  String get all_stages_completed;
+
+  /// No description provided for @congratulations.
+  ///
+  /// In ko, this message translates to:
+  /// **'축하합니다!'**
+  String get congratulations;
 }
 
 class _AppLocalizationsDelegate

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/water_tube.dart';
 import '../models/puzzle_model.dart';
 import '../providers/game_provider.dart';
+import '../l10n/app_localizations.dart';
 
 class WaterSortPuzzleScreen extends StatefulWidget {
   final PuzzleModel puzzle;
@@ -185,6 +186,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
   }
 
   void _showWinDialog({required bool success}) {
+    final l10n = AppLocalizations.of(context)!;
     final String title;
     final String message;
     final String emoji;
@@ -195,18 +197,18 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
       gameProvider.completePuzzle(widget.puzzle.id);
 
       emoji = '🎉';
-      title = '완료!';
+      title = l10n.completed_exclamation;
       if (moveCount <= maxMoves * 0.7) {
-        message = '환상적입니다! $moveCount번 만에 퍼즐을 완성했습니다!\n⭐⭐⭐ 완벽한 클리어!';
+        message = l10n.perfect_clear(moveCount);
       } else if (moveCount <= maxMoves * 0.9) {
-        message = '훌륭합니다! $moveCount번 만에 퍼즐을 완성했습니다!\n⭐⭐ 멋진 클리어!';
+        message = l10n.great_clear(moveCount);
       } else {
-        message = '성공! $moveCount번 만에 퍼즐을 완성했습니다!\n⭐ 클리어!';
+        message = l10n.good_clear(moveCount);
       }
     } else {
       emoji = '😅';
-      title = '이동 횟수 초과!';
-      message = '최대 이동 횟수($maxMoves)를 초과했습니다.\n다시 도전해보세요!';
+      title = l10n.failed_exclamation;
+      message = l10n.max_moves_exceeded(maxMoves);
     }
 
     showDialog(
@@ -222,14 +224,14 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
                 Navigator.pop(context);
                 _resetPuzzle();
               },
-              child: const Text('다시 시도'),
+              child: Text(l10n.retry),
             ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Text(success ? '확인' : '닫기'),
+            child: Text(success ? l10n.confirm : l10n.close),
           ),
         ],
       ),
@@ -253,10 +255,10 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('새로운 판을 생성했습니다!'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.new_board_generated),
         backgroundColor: Colors.blue,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -267,7 +269,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
 
     if (hints <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('사용 가능한 힌트가 없습니다')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.noHintsAvailable)),
       );
       return;
     }
@@ -277,7 +279,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
 
     if (move == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('더 이상 이동할 수 없습니다')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.no_more_moves)),
       );
       return;
     }
@@ -303,7 +305,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('힌트를 사용했습니다! (남은 힌트: ${hints - 1}개)'),
+        content: Text(AppLocalizations.of(context)!.hint_used(hints - 1)),
         backgroundColor: Colors.green,
       ),
     );
@@ -368,7 +370,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
                   IconButton(
                     icon: const Icon(Icons.lightbulb_outline),
                     onPressed: hints > 0 ? _useHint : null,
-                    tooltip: '힌트 사용 ($hints개)',
+                    tooltip: AppLocalizations.of(context)!.use_hint_count(hints),
                     color: hints > 0 ? Colors.orange : Colors.grey,
                   ),
                   if (hints > 0)
@@ -410,17 +412,17 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
                 isColorblindMode = !isColorblindMode;
               });
             },
-            tooltip: '색약 모드',
+            tooltip: AppLocalizations.of(context)!.colorblind_mode,
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetPuzzle,
-            tooltip: '다시 시작',
+            tooltip: AppLocalizations.of(context)!.restart,
           ),
           IconButton(
             icon: const Icon(Icons.shuffle),
             onPressed: _regeneratePuzzle,
-            tooltip: '새 판 생성',
+            tooltip: AppLocalizations.of(context)!.new_board,
           ),
         ],
       ),
@@ -435,7 +437,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
               children: [
                 _buildInfoItem(
                   Icons.swap_horiz,
-                  '이동 횟수',
+                  AppLocalizations.of(context)!.moves_count,
                   '$moveCount / $maxMoves',
                   color: moveCount > maxMoves
                       ? Colors.red
@@ -445,7 +447,7 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
                 ),
                 _buildInfoItem(
                   Icons.check_circle,
-                  '완료된 튜브',
+                  AppLocalizations.of(context)!.completed_tubes,
                   '${tubes.where((t) => t.isSorted).length} / $colorCount',
                 ),
                 Consumer<GameProvider>(
@@ -455,8 +457,8 @@ class _WaterSortPuzzleScreenState extends State<WaterSortPuzzleScreen> {
                       onTap: hints > 0 ? _useHint : null,
                       child: _buildInfoItem(
                         Icons.lightbulb,
-                        '힌트',
-                        '$hints개',
+                        AppLocalizations.of(context)!.hints,
+                        '$hints',
                         color: hints > 0 ? Colors.orange : Colors.grey,
                       ),
                     );
