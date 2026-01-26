@@ -63,9 +63,13 @@
 - **SharedPreferences**: 로컬 데이터 저장
 
 ### Health & Location
-- **health: ^10.2.0**: HealthKit / Health Connect 통합
+- **health: ^13.3.0**: HealthKit / Health Connect 통합
 - **geolocator: ^13.0.2**: GPS 위치 추적
 - **permission_handler: ^11.3.1**: 권한 관리
+
+### Internationalization
+- **flutter_localizations**: 다국어 지원 (한국어, English)
+- **intl**: 국제화 및 현지화
 
 ---
 
@@ -88,10 +92,13 @@ cd walking_puzzle_game
 # 2. 패키지 설치
 flutter pub get
 
-# 3. iOS 의존성 설치 (macOS 전용)
+# 3. 다국어 파일 생성
+flutter gen-l10n
+
+# 4. iOS 의존성 설치 (macOS 전용)
 cd ios && pod install && cd ..
 
-# 4. 앱 실행
+# 5. 앱 실행
 flutter run
 ```
 
@@ -113,6 +120,10 @@ flutter run
 ```
 lib/
 ├── main.dart                    # 앱 진입점 및 네비게이션
+├── l10n/                        # 다국어 지원
+│   ├── app_ko.arb              # 한국어 번역
+│   ├── app_en.arb              # 영어 번역
+│   └── app_localizations.dart  # 자동 생성된 localization 클래스
 ├── models/                      # 데이터 모델
 │   ├── puzzle_model.dart        # 퍼즐 정보
 │   ├── user_progress_model.dart # 사용자 진행 상황
@@ -126,11 +137,15 @@ lib/
 ├── providers/                   # 상태 관리 (Provider 패턴)
 │   ├── game_provider.dart       # 게임 + 걸음 수 보상
 │   ├── step_counter_provider.dart # 걸음 수 추적
-│   └── location_provider.dart   # 위치 추적
+│   ├── location_provider.dart   # 위치 추적
+│   └── locale_provider.dart     # 언어 설정
 ├── screens/                     # 화면 UI
 │   ├── puzzle_list_screen.dart  # 퍼즐 목록 + 보상 진행
 │   ├── water_sort_puzzle_screen.dart # Water Sort 게임
-│   └── profile_screen.dart      # 내 정보 통계
+│   ├── settings_screen.dart     # 설정 및 언어 선택
+│   └── collection_screen.dart   # 랜드마크 컬렉션
+├── utils/                       # 유틸리티
+│   └── app_identity.dart        # 개발자 아이덴티티
 └── widgets/                     # 재사용 위젯
 ```
 
@@ -165,33 +180,43 @@ lib/
 - ✅ 내 정보 통계 화면
 - ✅ 하단 네비게이션 바
 - ✅ 다크/라이트 테마 지원
+- ✅ 다국어 지원 (한국어, English)
+  - 설정 화면에서 언어 전환 가능
+  - 게임 플레이 화면 전체 번역 완료
+  - 앱스토어 글로벌 출시 준비
+
+### Developer Identity
+- ✅ lukaPlayground 브랜딩
+- ✅ WalkingPuzzle 로고
+- ✅ 이스터에그: 설정 화면에서 버전 7번 탭 시 개발자 정보 표시
 
 ---
 
 ## 🔜 다음 단계
 
-### 우선순위 높음
-1. **위치 기반 특별 보상**
-   - 백그라운드 GPS 감지 및 로컬 알림
-   - 랜드마크 근처 도달 시 알림 발송
-   - 보상 형태 결정 (힌트/퍼즐/아이콘)
+### 1. 앱스토어 등록 준비
+- [ ] 앱 아이콘 최종 디자인
+- [ ] 스크린샷 제작 (한국어/영어)
+- [ ] 앱 설명 작성 (한국어/영어)
+- [ ] 개인정보 처리방침 작성
+- [ ] Apple Developer 계정 등록 ($99/년)
+- [ ] TestFlight 베타 테스트
 
-2. **실제 기기 테스트 및 최적화**
-   - iOS 실기기에서 HealthKit 연동 검증
-   - Android 실기기에서 Health Connect 검증
-   - 배터리 소모 최적화
-   - 걸음 수 동기화 주기 조정
+### 2. 위치 기반 특별 보상
+- [ ] 백그라운드 GPS 감지 및 로컬 알림
+- [ ] 랜드마크 근처 도달 시 자동 보상
+- [ ] 실제 기기에서 GPS 테스트
 
-### 추가 기능
-3. **사용자 경험 개선**
-   - 튜토리얼 추가
-   - 일일 목표 및 배지 시스템
-   - 통계 화면 강화
+### 3. 실제 기기 테스트 및 최적화
+- [ ] iOS 실기기에서 HealthKit 연동 검증
+- [ ] Android 실기기에서 Health Connect 검증
+- [ ] 배터리 소모 최적화
+- [ ] 걸음 수 동기화 주기 조정
 
-4. **추가 퍼즐 타입**
-   - 색상 매칭 퍼즐
-   - 조각 맞추기 퍼즐
-   - 다양한 테마
+### 4. 사용자 경험 개선
+- [ ] 일일 목표 및 배지 시스템
+- [ ] 통계 화면 강화
+- [ ] 추가 퍼즐 타입 개발
 
 ---
 
@@ -199,8 +224,9 @@ lib/
 
 1. **건강한 습관 형성**: 게임을 즐기면서 자연스럽게 운동 동기 부여
 2. **광고 없는 경험**: 순수하게 게임에만 집중할 수 있는 환경
-3. **접근성**: 색약 모드, 직관적인 UI로 모두가 즐길 수 있는 게임
-4. **탐험 요소**: 위치 기반 콘텐츠로 외출 동기 부여
+3. **접근성**: 색약 모드, 다국어 지원, 직관적인 UI로 모두가 즐길 수 있는 게임
+4. **글로벌 출시**: 한국어와 영어를 지원하여 해외 시장 진출
+5. **탐험 요소**: 위치 기반 콘텐츠로 외출 동기 부여
 
 ---
 
