@@ -1,0 +1,77 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "WalkingPuzzle",
+
+  "puzzle": "Puzzle",
+  "settings": "Settings",
+  "collection": "Landmark Collection",
+
+  "stepReward": "Step Reward",
+  "todaySteps": "Today's Steps",
+  "hintsEarned": "Hints Earned",
+  "stepsToNextHint": "{steps} steps until next hint",
+
+  "availableStages": "Available Stages",
+  "stage": "Stage",
+  "difficulty": "Difficulty",
+  "easy": "Easy",
+  "normal": "Normal",
+  "hard": "Hard",
+  "veryHard": "Very Hard",
+  "hell": "Hell",
+
+  "locked": "Locked",
+  "unlocked": "Unlocked",
+  "completed": "Completed",
+  "complete": "Complete",
+  "walkToUnlock": "Walk to unlock",
+  "requiredSteps": "Required Steps",
+  "stepsUnit": "steps",
+
+  "hints": "Hints",
+  "availableHints": "Available Hints",
+  "useHint": "Use Hint",
+  "noHintsAvailable": "No hints available",
+
+  "appInfo": "App Info",
+  "version": "Version",
+  "appDescription": "App Description",
+  "appDescriptionText": "Puzzle game solved by walking",
+
+  "dataManagement": "Data Management",
+  "resetProgress": "Reset Progress",
+  "resetProgressDescription": "Delete all game progress",
+  "resetConfirmTitle": "Reset Progress",
+  "resetConfirmMessage": "All game progress will be deleted.\\nThis action cannot be undone.\\n\\nAre you sure you want to reset?",
+  "cancel": "Cancel",
+  "reset": "Reset",
+  "resetSuccess": "Progress has been reset",
+
+  "gameStats": "Game Statistics",
+  "completedStages": "Completed Stages",
+  "todayStepsCount": "Today's Steps",
+  "stepsCount": "{count} steps",
+
+  "collectionStatus": "Collection Status",
+  "landmarks": "Landmarks",
+  "countries": "Countries",
+  "collectedCount": "{collected} / {total} collected",
+
+  "notVisitedYet": "Not visited yet",
+  "collected": "Collected",
+  "currentProfileIcon": "Current Profile Icon",
+  "setAsProfileIcon": "Set as Profile Icon",
+  "close": "Close",
+  "profileIconSet": "Set {icon} {name} as profile icon",
+
+  "landmarkFound": "{icon} {name} found!\\nHint +1",
+
+  "initializing": "Initializing app...",
+  "retry": "Retry",
+
+  "language": "Language",
+  "languageSettings": "Language Settings",
+  "korean": "한국어",
+  "english": "English"
+}

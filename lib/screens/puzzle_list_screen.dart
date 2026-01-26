@@ -16,7 +16,13 @@ class PuzzleListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('퍼즐'),
+        title: const Text(
+          'WalkingPuzzle',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: Consumer<LocationProvider>(
           builder: (context, locationProvider, child) {

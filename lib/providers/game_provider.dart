@@ -1,3 +1,4 @@
+// 🎨 lukaPlayground - Game State Management
 import 'package:flutter/foundation.dart';
 import '../models/puzzle_model.dart';
 import '../models/user_progress_model.dart';

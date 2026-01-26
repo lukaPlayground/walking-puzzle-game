@@ -5,8 +5,69 @@ import '../providers/game_provider.dart';
 import '../providers/step_counter_provider.dart';
 import '../services/storage_service.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  int _tapCount = 0;
+
+  void _onVersionTap() {
+    setState(() {
+      _tapCount++;
+      if (_tapCount >= 7) {
+        _showDeveloperIdentity();
+        _tapCount = 0;
+      }
+    });
+  }
+
+  void _showDeveloperIdentity() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Text('🎨'),
+            SizedBox(width: 8),
+            Text('Developer Identity'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '🌟 Created by',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'lukaPlayground',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('💪 Every step counts,\nevery puzzle matters'),
+            const SizedBox(height: 8),
+            const Text('🚶💧🧩 Walk, Solve, Thrive'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +87,7 @@ class SettingsScreen extends StatelessWidget {
                 leading: const Icon(Icons.info_outline),
                 title: const Text('버전'),
                 subtitle: const Text('1.0.0'),
+                onTap: _onVersionTap,
               ),
               ListTile(
                 leading: const Icon(Icons.description),

@@ -1,0 +1,121 @@
+{
+  "@@locale": "ko",
+
+  "appTitle": "WalkingPuzzle",
+
+  "puzzle": "퍼즐",
+  "settings": "설정",
+  "collection": "랜드마크 컬렉션",
+
+  "stepReward": "걸음 수 보상",
+  "todaySteps": "오늘 걸음 수",
+  "hintsEarned": "획득한 힌트",
+  "stepsToNextHint": "다음 힌트까지 {steps}보 남음",
+  "@stepsToNextHint": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+
+  "availableStages": "플레이 가능한 스테이지",
+  "stage": "스테이지",
+  "difficulty": "난이도",
+  "easy": "쉬움",
+  "normal": "일반",
+  "hard": "어려움",
+  "veryHard": "매우 어려움",
+  "hell": "지옥",
+
+  "locked": "잠김",
+  "unlocked": "잠금 해제됨",
+  "completed": "완료",
+  "complete": "완료",
+  "walkToUnlock": "걸어서 잠금 해제",
+  "requiredSteps": "필요한 걸음 수",
+  "stepsUnit": "보",
+
+  "hints": "힌트",
+  "availableHints": "사용 가능한 힌트",
+  "useHint": "힌트 사용",
+  "noHintsAvailable": "사용 가능한 힌트가 없습니다",
+
+  "appInfo": "앱 정보",
+  "version": "버전",
+  "appDescription": "앱 소개",
+  "appDescriptionText": "걸으면 풀리는 퍼즐 게임",
+
+  "dataManagement": "데이터 관리",
+  "resetProgress": "진행 상황 초기화",
+  "resetProgressDescription": "모든 게임 진행 상황을 삭제합니다",
+  "resetConfirmTitle": "진행 상황 초기화",
+  "resetConfirmMessage": "모든 게임 진행 상황이 삭제됩니다.\\n이 작업은 되돌릴 수 없습니다.\\n\\n정말 초기화하시겠습니까?",
+  "cancel": "취소",
+  "reset": "초기화",
+  "resetSuccess": "진행 상황이 초기화되었습니다",
+
+  "gameStats": "게임 통계",
+  "completedStages": "완료한 스테이지",
+  "todayStepsCount": "오늘 걸음 수",
+  "stepsCount": "{count}보",
+  "@stepsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "collectionStatus": "수집 현황",
+  "landmarks": "랜드마크",
+  "countries": "국가",
+  "collectedCount": "{collected} / {total} 수집",
+  "@collectedCount": {
+    "placeholders": {
+      "collected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "notVisitedYet": "아직 방문하지 않음",
+  "collected": "수집 완료",
+  "currentProfileIcon": "현재 프로필 아이콘",
+  "setAsProfileIcon": "프로필 아이콘으로 설정",
+  "close": "닫기",
+  "profileIconSet": "{icon} {name}을(를) 프로필 아이콘으로 설정했습니다",
+  "@profileIconSet": {
+    "placeholders": {
+      "icon": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "landmarkFound": "{icon} {name} 발견!\\n힌트 +1",
+  "@landmarkFound": {
+    "placeholders": {
+      "icon": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "initializing": "앱을 초기화하는 중...",
+  "retry": "다시 시도",
+
+  "language": "언어",
+  "languageSettings": "언어 설정",
+  "korean": "한국어",
+  "english": "English"
+}

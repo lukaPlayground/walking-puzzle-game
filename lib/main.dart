@@ -1,3 +1,9 @@
+// ═══════════════════════════════════════
+// 🎨 Created by lukaPlayground
+// 🌟 Walking Puzzle Game
+// 💪 Every step counts, every puzzle matters
+// ═══════════════════════════════════════
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/game_provider.dart';
@@ -5,8 +11,11 @@ import 'providers/step_counter_provider.dart';
 import 'providers/location_provider.dart';
 import 'screens/puzzle_list_screen.dart';
 import 'screens/settings_screen.dart';
+import 'utils/app_identity.dart';
 
 void main() {
+  // Print creator signature to debug console
+  AppIdentity.printSignature();
   runApp(const WalkingPuzzleApp());
 }
 
@@ -198,16 +207,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             _currentIndex = index;
           });
         },
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.extension_outlined),
             selectedIcon: Icon(Icons.extension),
-            label: '퍼즐',
+            label: '',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: '설정',
+            label: '',
           ),
         ],
       ),
