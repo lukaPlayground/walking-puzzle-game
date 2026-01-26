@@ -68,7 +68,6 @@
   "landmarkFound": "{icon} {name} found!\\nHint +1",
 
   "initializing": "Initializing app...",
-  "retry": "Retry",
 
   "language": "Language",
   "languageSettings": "Language Settings",

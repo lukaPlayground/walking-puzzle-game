@@ -428,12 +428,6 @@ abstract class AppLocalizations {
   /// **'앱을 초기화하는 중...'**
   String get initializing;
 
-  /// No description provided for @retry.
-  ///
-  /// In ko, this message translates to:
-  /// **'다시 시도'**
-  String get retry;
-
   /// No description provided for @language.
   ///
   /// In ko, this message translates to:
@@ -493,6 +487,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'최대 이동 횟수({maxMoves})를 초과했습니다.\\n다시 도전해보세요!'**
   String max_moves_exceeded(int maxMoves);
+
+  /// No description provided for @retry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get retry;
 
   /// No description provided for @confirm.
   ///

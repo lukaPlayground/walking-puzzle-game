@@ -185,9 +185,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get initializing => 'Initializing app...';
 
   @override
-  String get retry => 'Retry';
-
-  @override
   String get language => 'Language';
 
   @override
@@ -224,6 +221,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String max_moves_exceeded(int maxMoves) {
     return 'Maximum moves ($maxMoves) exceeded.\\nTry again!';
   }
+
+  @override
+  String get retry => 'Retry';
 
   @override
   String get confirm => 'OK';

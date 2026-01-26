@@ -185,9 +185,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get initializing => '앱을 초기화하는 중...';
 
   @override
-  String get retry => '다시 시도';
-
-  @override
   String get language => '언어';
 
   @override
@@ -224,6 +221,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String max_moves_exceeded(int maxMoves) {
     return '최대 이동 횟수($maxMoves)를 초과했습니다.\\n다시 도전해보세요!';
   }
+
+  @override
+  String get retry => '다시 시도';
 
   @override
   String get confirm => '확인';
