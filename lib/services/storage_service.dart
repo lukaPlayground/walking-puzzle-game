@@ -6,6 +6,7 @@ class StorageService {
   static const String _userProgressKey = 'user_progress';
   static const String _lastStepResetKey = 'last_step_reset';
   static const String _totalStepsKey = 'total_steps';
+  static const String _landmarkCollectionKey = 'landmark_collection';
 
   Future<void> saveUserProgress(UserProgressModel progress) async {
     final prefs = await SharedPreferences.getInstance();
@@ -80,5 +81,26 @@ class StorageService {
   Future<void> clearAllData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  Future<void> saveLandmarkCollection(Map<String, dynamic> collection) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(collection);
+    await prefs.setString(_landmarkCollectionKey, jsonString);
+  }
+
+  Future<Map<String, dynamic>?> getLandmarkCollection() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_landmarkCollectionKey);
+
+    if (jsonString == null) {
+      return null;
+    }
+
+    try {
+      return jsonDecode(jsonString) as Map<String, dynamic>;
+    } catch (e) {
+      return null;
+    }
   }
 }

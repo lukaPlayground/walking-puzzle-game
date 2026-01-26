@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/game_provider.dart';
 import '../providers/step_counter_provider.dart';
+import '../providers/location_provider.dart';
 import '../models/puzzle_model.dart';
 import 'water_sort_puzzle_screen.dart';
 import 'tutorial_screen.dart';
+import 'collection_screen.dart';
 
 class PuzzleListScreen extends StatelessWidget {
   const PuzzleListScreen({super.key});
@@ -16,6 +18,72 @@ class PuzzleListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('퍼즐'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: Consumer<LocationProvider>(
+          builder: (context, locationProvider, child) {
+            final collection = locationProvider.collection;
+            final unviewedCount = collection.getUnviewedCount();
+            final profileIcon = locationProvider.getProfileIcon();
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CollectionScreen(),
+                    ),
+                  );
+                  // 컬렉션 화면에서 돌아오면 모두 확인한 것으로 표시
+                  await locationProvider.markAllAsViewed();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        profileIcon,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                    ),
+                    if (unviewedCount > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            '$unviewedCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
       body: Consumer2<GameProvider, StepCounterProvider>(
         builder: (context, gameProvider, stepProvider, child) {
@@ -29,34 +97,6 @@ class PuzzleListScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 진행 상황 카드
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildProgressItem(
-                          context,
-                          Icons.flag,
-                          '완료',
-                          '$completedCount개',
-                          Colors.green,
-                        ),
-                        Container(width: 1, height: 40, color: Colors.grey[300]),
-                        _buildProgressItem(
-                          context,
-                          Icons.all_inclusive,
-                          '현재 레벨',
-                          '${puzzles.length}',
-                          Theme.of(context).colorScheme.primary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
                 // 걸음 수 보상 진행 상황 카드
                 _buildStepRewardCard(context, gameProvider, todaySteps),
                 const SizedBox(height: 24),
@@ -119,31 +159,6 @@ class PuzzleListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressItem(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String value,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildStepRewardCard(
     BuildContext context,

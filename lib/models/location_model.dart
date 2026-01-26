@@ -68,6 +68,9 @@ class LandmarkModel {
   final double longitude;
   final double radius;
   final String? imageUrl;
+  final String country;
+  final String countryCode;
+  final String icon;
 
   LandmarkModel({
     required this.id,
@@ -77,6 +80,9 @@ class LandmarkModel {
     required this.longitude,
     this.radius = 100.0,
     this.imageUrl,
+    required this.country,
+    required this.countryCode,
+    required this.icon,
   });
 
   factory LandmarkModel.fromJson(Map<String, dynamic> json) {
@@ -88,6 +94,9 @@ class LandmarkModel {
       longitude: json['longitude'] as double,
       radius: json['radius'] as double? ?? 100.0,
       imageUrl: json['imageUrl'] as String?,
+      country: json['country'] as String,
+      countryCode: json['countryCode'] as String,
+      icon: json['icon'] as String,
     );
   }
 
@@ -100,6 +109,9 @@ class LandmarkModel {
       'longitude': longitude,
       'radius': radius,
       'imageUrl': imageUrl,
+      'country': country,
+      'countryCode': countryCode,
+      'icon': icon,
     };
   }
 

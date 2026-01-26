@@ -4,7 +4,7 @@ import 'providers/game_provider.dart';
 import 'providers/step_counter_provider.dart';
 import 'providers/location_provider.dart';
 import 'screens/puzzle_list_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/settings_screen.dart';
 
 void main() {
   runApp(const WalkingPuzzleApp());
@@ -57,13 +57,45 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = const [
     PuzzleListScreen(),
-    ProfileScreen(),
+    SettingsScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
     _initializeApp();
+  }
+
+  Set<String> _notifiedLandmarks = {}; // 이미 알림한 랜드마크 추적
+
+  void _checkLandmarkProximity(LocationProvider locationProvider, GameProvider gameProvider) async {
+    final nearbyLandmark = locationProvider.checkNearbyLandmark();
+
+    if (nearbyLandmark != null && !_notifiedLandmarks.contains(nearbyLandmark.id)) {
+      _notifiedLandmarks.add(nearbyLandmark.id);
+
+      // 랜드마크 수집
+      final collected = await locationProvider.collectLandmark(nearbyLandmark.id);
+
+      if (collected) {
+        // 힌트 1개 추가
+        await gameProvider.addHint();
+
+        // 사용자에게 알림
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${nearbyLandmark.icon} ${nearbyLandmark.name} 발견!\n힌트 +1',
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _initializeApp() async {
@@ -92,6 +124,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           stepCounterProvider.todaySteps,
           stepCounterProvider.totalSteps,
         );
+      });
+
+      // LocationProvider 리스너 추가: 위치 변경 시 랜드마크 근접 확인
+      locationProvider.addListener(() {
+        _checkLandmarkProximity(locationProvider, gameProvider);
       });
 
       if (mounted) {
@@ -168,9 +205,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             label: '퍼즐',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: '내 정보',
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: '설정',
           ),
         ],
       ),
