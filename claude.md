@@ -495,6 +495,16 @@ lib/
 - 하단 네비게이션 바
 - Material Design 3 적용
 - 걸음 수 보상 진행 상황 시각화
+- 다국어 지원 (한국어, English)
+- lukaPlayground 브랜딩 및 이스터에그
+
+### ✅ 크로스 플랫폼 빌드 및 테스트
+- **iOS**: iPhone 실기기 테스트 완료 (HealthKit 연동)
+- **Android**: Samsung Galaxy S9 실기기 테스트 완료
+  - minSdk 26 (Android 8.0+) 설정
+  - 위치 권한 설정 완료
+  - 흔들기 감지 정상 작동
+  - 다국어 지원 확인
 
 ---
 
@@ -580,6 +590,74 @@ lib/
 **health 패키지 업그레이드**:
 - `health: ^10.2.0` → `health: ^13.3.0`
 - 이유: intl 버전 충돌 해결 (flutter_localizations와 호환)
+
+---
+
+### 2026-01-29: 안드로이드 빌드 설정 및 실기기 테스트
+
+#### 1. 안드로이드 기기 연결 및 설정
+
+**ADB 설정**:
+- Android SDK 경로 확인: `/Users/work6/Library/Android/sdk`
+- ADB를 PATH에 추가하여 기기 인식
+- Samsung Galaxy S9 (SM-G960N, Android 10 API 29) 연결 성공
+
+**개발자 모드 활성화**:
+- USB 디버깅 활성화
+- 파일 전송 모드로 USB 연결
+- ADB 권한 허용
+
+#### 2. 안드로이드 빌드 설정 수정
+
+**minSdkVersion 상향 조정** (`android/app/build.gradle.kts`):
+- 문제: health 패키지가 minSdk 26을 요구하지만 프로젝트는 24로 설정됨
+- 해결: `minSdk = 26`으로 변경 (Android 8.0 이상 필수)
+- 영향: Android 8.0 미만 기기에서 앱 설치 불가 (현재 대부분 기기는 8.0 이상)
+
+**위치 권한 추가** (`android/app/src/main/AndroidManifest.xml`):
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+```
+
+#### 3. Gradle 캐시 문제 해결
+
+**발생한 문제**:
+- Gradle 캐시 손상 오류 발생
+- `CorruptedCacheException: Corrupted IndexBlock`
+
+**해결 방법**:
+```bash
+rm -rf ~/.gradle/caches/
+flutter clean
+```
+
+#### 4. 안드로이드 빌드 및 설치 성공
+
+**빌드 결과**:
+- ✅ APK 빌드 성공 (release mode)
+- ✅ Samsung Galaxy S9에 설치 완료
+- ✅ 앱 실행 확인
+
+**동작 확인**:
+- ✅ 흔들기 감지 정상 작동 (0.5보씩 증가)
+- ⚠️ Health Connect 미지원 (Android 10은 Health Connect 미내장, Android 14+만 기본 탑재)
+- ✅ 위치 권한 요청 가능
+- ✅ 다국어 지원 정상 작동
+
+**Health Connect 호환성**:
+- Android 14 (API 34) 이상: 시스템에 내장
+- Android 13 이하: Google Play에서 별도 앱 설치 필요
+- Galaxy S9 (Android 10): Health Connect 사용 불가하지만 흔들기 감지로 대체 가능
+
+#### 5. iOS vs Android 설정 분리
+
+**중요 사항**:
+- minSdk는 안드로이드 전용 설정으로 iOS에 영향 없음
+- iOS는 `ios/Podfile`에서 `platform :ios, '14.0'`로 별도 관리
+- 각 플랫폼은 독립적인 설정 파일 사용
+- iOS 재테스트 불필요
 
 ---
 
