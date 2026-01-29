@@ -598,7 +598,7 @@ lib/
 #### 1. 안드로이드 기기 연결 및 설정
 
 **ADB 설정**:
-- Android SDK 경로 확인: `/Users/work6/Library/Android/sdk`
+- Android SDK 경로 확인: `~/Library/Android/sdk` (macOS) 또는 `%LOCALAPPDATA%\Android\sdk` (Windows)
 - ADB를 PATH에 추가하여 기기 인식
 - Samsung Galaxy S9 (SM-G960N, Android 10 API 29) 연결 성공
 
